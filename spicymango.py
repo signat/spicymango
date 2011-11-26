@@ -14,7 +14,8 @@ print "The Open Source Intelligence Analysis Tool"
 print ""
 print "SpicyMango v0.1"
 print "Written by: Chris Centore, Steve Swann, Jason Gunnoe"
-print "Website: http://code.google.com/spicymango"
+print "Website: http://code.google.com/p/spicymango/"
+print "Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/"
 print ""
 
 mod_counter = 0
