@@ -1,0 +1,21 @@
+#########################################################################
+#
+# Keywords File for SpicyMango
+#
+# SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
+# Website: http://code.google.com/p/spicymango/
+# Download: svn co http://code.google.com/p/spicymango/ spicymango/
+#
+#########################################################################
+# 
+# The first item is the module name. The second item is the keyword term 
+# or phrase.
+# Example: ['mod_irc','keyword']
+#
+#########################################################################
+
+# mod_irc uses regular expressions for keyword terms
+['mod_irc','.*']
+
+# mod_twitter uses the search operators in the Twitter API
+['mod_twitter','black friday']

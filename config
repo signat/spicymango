@@ -1,0 +1,45 @@
+#########################################################################
+#
+# Configuration File for SpicyMango
+#
+# SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
+# Website: http://code.google.com/p/spicymango/
+# Download: svn co http://code.google.com/p/spicymango/ spicymango/
+#
+#########################################################################
+
+# Global Configuration Options
+#########################################################################
+
+
+
+# MOD_IRC by: Chris Centore
+# Collects data from IRC channels
+#########################################################################
+# Enable IRC module
+MOD_IRC=OFF
+
+# IRC Server
+MOD_IRC_SERVER="irc.freenode.com"
+
+# IRC Channel(s): Seperate channels with a comma. (i.e. "spicymango","anotherchannel")
+MOD_IRC_CHANNELS="spicymango","spicymango2"
+
+# IRC User
+MOD_IRC_USER="spicybot"
+
+# Number of entries to tail after a match on a keyword
+MOD_IRC_TAIL=5
+
+
+# MOD_TWITTER by: Jason Gunnoe
+# Searches Twitter using its API
+#########################################################################
+# Enable Twitter module
+MOD_TWITTER=OFF
+
+# How many post to query at a time
+MOD_TWITTER_COUNT=3
+
+# Set the interval (in seconds) that MOD_TWITTER will query the api
+MOD_TWITTER_INTERVAL=10
