@@ -18,4 +18,4 @@
 ['mod_irc','.*']
 
 # mod_twitter uses the search operators in the Twitter API
-['mod_twitter','black friday']
+['mod_twitter','spicy']

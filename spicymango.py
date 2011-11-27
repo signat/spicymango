@@ -20,7 +20,7 @@ print ""
 
 mod_counter = 0
 
-# Check to see if mod_irc is enabled, if so, run it.
+# Check to see which modules are enabled. Then run them.
 enable_modirc = check_config("MOD_IRC=")
 if enable_modirc == 'ON':
         import modules.mod_irc
@@ -32,6 +32,11 @@ if enable_modtwitter == 'ON':
 if mod_counter == 0:
 	print "\n[!] Error: Please enable a module in the config file.\n"
 	sys.exit()
+
+# Run Web View if enabled in the config
+enable_webview = check_config("WEB_VIEW=")
+if enable_webview == 'ON':
+	import web.web_view
 
 while 1:
         try:

@@ -10,8 +10,10 @@
 
 # Global Configuration Options
 #########################################################################
-
-
+# Enable the web view (Basic viewing right now)
+WEB_VIEW=ON
+WEB_VIEW_IP="127.0.0.1"
+WEB_VIEW_PORT=8080
 
 # MOD_IRC by: Chris Centore
 # Collects data from IRC channels
@@ -39,7 +41,16 @@ MOD_IRC_TAIL=5
 MOD_TWITTER=OFF
 
 # How many post to query at a time
-MOD_TWITTER_COUNT=3
+MOD_TWITTER_COUNT=5
 
 # Set the interval (in seconds) that MOD_TWITTER will query the api
-MOD_TWITTER_INTERVAL=10
+MOD_TWITTER_INTERVAL=5
+
+
+# Output Options
+#########################################################################
+# The default output goes to the console.
+# Output to file
+OUTPUT_FILE=OFF
+# Specify FULL output file path
+OUTPUT_FILE_NAME="path/to/output_file"

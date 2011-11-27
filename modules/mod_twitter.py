@@ -1,6 +1,7 @@
 import thread,sys
 sys.path.append("..")
 from src.core import *
+from src.output import *
 from xml.dom import minidom
 import time, urllib
 
@@ -31,8 +32,14 @@ def main(query,*args):
 		    id = e.getElementsByTagName("id")[0].firstChild.data.split(":")[2]
 		    name = e.getElementsByTagName("name")[0].firstChild.data.split(" ")[0]
 
-		    print "MOD_TWITTER: " + name + ": " + title + " [" + pub + "]"
-	 
+		    output_file_enable = check_config("OUTPUT_FILE")
+		    if output_file_enable == "ON":
+			try:
+		    		output_file("MOD_TWITTER: " + name + ": " + title + " [" + pub + "]")
+	 	    	except:
+				print "[!] MOD_TWITTER: Couldn't print line because it contains non-ASCII values."
+		    else:
+			print "MOD_TWITTER: " + name + ": " + title + " [" + pub + "]"
 	    time.sleep(interval)
 
 print "[!] MOD_TWITTER: loading..."

@@ -2,6 +2,7 @@ import thread,sys,re
 from includes import irc
 sys.path.append("..")
 from src.core import *
+from src.output import *
 
 def main():
 	#Get parameters from config file
@@ -25,7 +26,12 @@ def main():
 		for keyword in keywords:
 			hit = re.search(keyword[1], params[1])
 			if hit:
-	        		print "MOD_IRC: " + prefix + " : " + params[0] + " : " + params[1]
+				output_file_enable = check_config("OUTPUT_FILE")
+                    		if output_file_enable == "ON":
+                        		output_file("MOD_IRC: " + prefix + " : " + params[0] + " : " + params[1])
+                        	else:
+                        		print "MOD_IRC: " + prefix + " : " + params[0] + " : " + params[1]
+
 
 	MyIRC=irc.IRC_Object( )
 	MyConn=MyIRC.new_connection( )
