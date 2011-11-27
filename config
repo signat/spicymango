@@ -10,8 +10,8 @@
 
 # Global Configuration Options
 #########################################################################
-# Enable the web view (Basic viewing right now)
-WEB_VIEW=ON
+# Enable the web view (Very Experimental)
+WEB_VIEW=OFF
 WEB_VIEW_IP="127.0.0.1"
 WEB_VIEW_PORT=8080
 
