@@ -1,3 +1,18 @@
+#########################################################################
+#
+# IRC Module for SpicyMango
+# Author(s): Chris Centore
+#
+# Description: This module connects to one or more IRC channels and listens
+#	       for keyword hits then writes those hits to the specified 
+#	       output.
+#
+# SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
+# Website: http://code.google.com/p/spicymango/
+# Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/
+#
+#########################################################################
+
 import thread,sys,re
 from includes import irc
 sys.path.append("..")
@@ -11,6 +26,7 @@ def main():
 	irc_user = check_config("MOD_IRC_USER=")
 
 	def handle_state(newstate):
+	    # If connected, join the channels listed in the config file
 	    if newstate==4:
 		channels = irc_channels.split(',')
 		for channel in channels:
@@ -26,6 +42,7 @@ def main():
 		for keyword in keywords:
 			hit = re.search(keyword[1], params[1])
 			if hit:
+				#Check to see if an output file has been specified, else print to console
 				output_file_enable = check_config("OUTPUT_FILE")
                     		if output_file_enable == "ON":
                         		output_file("MOD_IRC: " + prefix + " : " + params[0] + " : " + params[1])
@@ -42,11 +59,13 @@ def main():
 	MyConn.realname=irc_user
 
 	MyConn.events['state'].add_listener(handle_state)
-#	MyConn.events['raw'].add_listener(handle_raw)
+	#Enable to debug only
+	# MyConn.events['raw'].add_listener(handle_raw)
 	MyConn.events['parsed'].add_listener(handle_parsed)
 
 	while 1:
 	    MyIRC.main_loop( )
 
+#Start the module
 print "[!] MOD_IRC: loading..."
 thread.start_new_thread(main, ())

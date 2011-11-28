@@ -12,12 +12,13 @@ print "|___/ .__/_\__|\_, |_|  |_\__,_|_||_\__, \___/"
 print "    |_|        |__/                 |___/"     
 print "The Open Source Intelligence Analysis Tool"
 print ""
-print "SpicyMango v0.1"
+print "SpicyMango v0.1 Alpha"
 print "Written by: Chris Centore, Steve Swann, Jason Gunnoe"
 print "Website: http://code.google.com/p/spicymango/"
 print "Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/"
 print ""
 
+# Setup counter for determining how many modules are loaded at runtime.
 mod_counter = 0
 
 # Check to see which modules are enabled. Then run them.
@@ -38,6 +39,7 @@ enable_webview = check_config("WEB_VIEW=")
 if enable_webview == 'ON':
 	import web.web_view
 
+# Let the program continue to run until an interrupt is recieved.
 while 1:
         try:
                 time.sleep(100000)

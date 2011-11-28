@@ -11,6 +11,8 @@
 # The first item is the module name. The second item is the keyword term 
 # or phrase.
 # Example: ['mod_irc','keyword']
+# 
+# Multiple search lines per module are permissable.
 #
 #########################################################################
 
