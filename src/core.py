@@ -11,12 +11,16 @@
 #
 #########################################################################
 
-import os,re
+import os,re,sys
 
 # Get configuation options from the config file.
 def check_config(param):
 	path = os.path.join(os.path.dirname(__file__), '..', 'config')
-        fileopen = file(path, "r")
+	try:
+        	fileopen = file(path, "r")
+	except:
+		print "[!] Error: Cannot find config file. Make sure its in the spicymango directory.\n"
+		sys.exit()
         # iterate through lines in file
         for line in fileopen:
 		if not re.search('#.', line):
@@ -30,7 +34,11 @@ def check_config(param):
 # Get Keyword/Module pairs from the keywords file.
 def get_keywords(param):
         path = os.path.join(os.path.dirname(__file__), '..', 'keywords')
-        fileopen = file(path, "r")
+        try:
+                fileopen = file(path, "r")
+        except:
+                print "[!] Error: Cannot find keywords file. Make sure its in the spicymango directory.\n"
+		sys.exit()
 	wordlist = []
         # iterate through lines in file
         for line in fileopen:
