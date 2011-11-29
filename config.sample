@@ -25,7 +25,7 @@ MOD_IRC=OFF
 MOD_IRC_SERVER="irc.freenode.com"
 
 # IRC Channel(s): Seperate channels with a comma. (i.e. "spicymango","anotherchannel")
-MOD_IRC_CHANNELS="spicymango","spicymango2"
+MOD_IRC_CHANNELS="spicymango"
 
 # IRC User
 MOD_IRC_USER="spicybot"
@@ -53,4 +53,4 @@ MOD_TWITTER_INTERVAL=5
 # Output to file
 OUTPUT_FILE=OFF
 # Specify FULL output file path
-OUTPUT_FILE_NAME="/path/to/ouputfile"
+OUTPUT_FILE_NAME="/full/path/to/ouputfile"

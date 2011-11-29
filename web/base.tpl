@@ -1,19 +1,13 @@
 <html>
 <head>
 <title>SpicyMango v0.1</title>
-<script type="text/JavaScript">
-function autoRefresh() {
-	setTimeout("location.reload(true);",5000);
-}
-</script>
+<script type="text/javascript" src="js/spicy.js"></script>
+<link type="text/css" rel="stylesheet" href="css/spicymain.css" />
 </head>
-<body onload="JavaScript:autoRefresh();">
-<table border="1">
-%for line in lines:
-  <tr>
-  	<td>{{line}}</td>
-  </tr>
-%end
+<body onload="javascript:autoReload();">
+<img src="images/spicy_logo.png" align="middle"><span id="version">v0.1</span>
+<br><br>
+<table id="data-table">
 </table>
 </body>
 </html>

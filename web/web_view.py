@@ -15,7 +15,7 @@
 
 import thread,sys
 sys.path.append("..")
-from src.bottle import route, run, template
+from src.bottle import route, run, template, static_file
 from src.core import *
 
 def main():
@@ -27,9 +27,26 @@ def main():
 	#Route for the webroot
 	@route('/')
 	def mainview():
-		filelines = reversed(open(outfile).readlines())
-    		display_output = template('base', lines=filelines)
-		return display_output
+		display_main = template('base')
+		return display_main
+	
+	@route('/get_data_table')
+	def data_table_view():
+                filelines = reversed(open(outfile).readlines())
+                display_datatable = template('get_data', lines=filelines)
+                return display_datatable
+
+	@route('/images/:filename#.*\.png#')
+	def send_image(filename):
+    		return static_file(filename, root='web/images/', mimetype='image/png')
+
+	@route('/css/:filename#.*\.css#')
+        def send_image(filename):
+                return static_file(filename, root='web/css/')
+
+	@route('/js/:filename#.*\.js#')
+        def send_image(filename):
+                return static_file(filename, root='web/js/')
 
 	# Run Web View webserver on specified ip and port
 	print "[!] Connect to http://%s:%s" % (ip, port)

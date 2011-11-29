@@ -1,0 +1,26 @@
+body { 
+	background-color: #b5afaf; 
+}
+#version { 
+	font-family: Cambria,'Palatino Linotype','Book Antiqua','URW Palladio L',serif;
+	font-size: 15px;
+	color: #766f6f; 
+}
+#data-table {
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: collapse;
+	font-family: Verdana,Geneva,'DejaVu Sans',sans-serif;
+	font-size: 12px;
+	color: #363636;
+}
+#data-table td {
+	padding: 4px;
+}
+td.evenrow {
+	background-color: #dddddd;
+}
+td.oddrow {
+	background-color: #d4d4d4;
+}
+
