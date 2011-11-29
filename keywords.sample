@@ -20,5 +20,4 @@
 ['mod_irc','.*']
 
 # mod_twitter uses the search operators in the Twitter API
-['mod_twitter','anonops']
-['mod_twitter','antisec']
+['mod_twitter','spicy']
