@@ -19,6 +19,8 @@ sys.path.append("..")
 from src.core import *
 from src.output import *
 
+execfile('src/getname')
+
 def main():
 	#Get parameters from config file
 	irc_server = check_config("MOD_IRC_SERVER=")
@@ -31,7 +33,7 @@ def main():
 		channels = irc_channels.split(',')
 		for channel in channels:
 	        	MyConn.send_string("JOIN #" + channel)
-			print "[!] MOD_IRC: Joined channel #" + channel
+			print_status(module,"Joined channel #" + channel)
 
 	def handle_raw(line):
 	    print line
@@ -42,14 +44,8 @@ def main():
 		for keyword in keywords:
 			hit = re.search(keyword[1], params[1])
 			if hit:
-				#Check to see if an output file has been specified, else print to console
-				output_file_enable = check_config("OUTPUT_FILE")
-                    		if output_file_enable == "ON":
-                        		output_file("MOD_IRC: " + prefix + " : " + params[0] + " : " + params[1])
-                        	else:
-                        		print "MOD_IRC: " + prefix + " : " + params[0] + " : " + params[1]
-
-
+				send_output(module, prefix + " : " + params[0] + " : " + params[1])
+       
 	MyIRC=irc.IRC_Object( )
 	MyConn=MyIRC.new_connection( )
 
@@ -67,5 +63,5 @@ def main():
 	    MyIRC.main_loop( )
 
 #Start the module
-print "[!] MOD_IRC: loading..."
+print_status(module,"loading...")
 thread.start_new_thread(main, ())

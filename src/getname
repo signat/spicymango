@@ -1,0 +1,8 @@
+import os
+
+def modname():
+        mod_name = os.path.basename(__file__)
+        mod_name = mod_name.split(".")
+        return mod_name[0]
+
+module = modname().upper()

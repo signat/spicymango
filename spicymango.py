@@ -3,6 +3,8 @@
 import sys,time
 from src.core import *
 
+execfile('src/getname')
+
 #Print Banner
 print ""
 print " ___      _         __  __"                    
@@ -31,7 +33,7 @@ if enable_modtwitter == 'ON':
         import modules.mod_twitter
 	mod_counter += 1
 if mod_counter == 0:
-	print "\n[!] Error: Please enable a module in the config file.\n"
+	print_error(module,"Please enable a module in the config file.")
 	sys.exit()
 
 # Run Web View if enabled in the config
@@ -44,5 +46,5 @@ while 1:
         try:
                 time.sleep(100000)
         except KeyboardInterrupt:
-                print "\n[!] Quiting SpicyMango...\n"
+                print_warning(module,"Quiting SpicyMango...")
                 sys.exit()

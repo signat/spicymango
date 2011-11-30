@@ -18,6 +18,8 @@ sys.path.append("..")
 from src.bottle import route, run, template, static_file
 from src.core import *
 
+execfile('src/getname')
+
 def main():
 	#Get config options
 	ip = check_config("WEB_VIEW_IP=")
@@ -49,13 +51,13 @@ def main():
                 return static_file(filename, root='web/js/')
 
 	# Run Web View webserver on specified ip and port
-	print "[!] Connect to http://%s:%s" % (ip, port)
+	print_status(module,"Connect to http://%s:%s" % (ip, port))
 	run(port=port, host=ip, quiet="True")
 
 #If the output file option is not set in the config, don't run.
 check_output = check_config("OUTPUT_FILE=")
 if check_output == 'ON':
-	print "[!] Starting Web View..."
+	print_status(module,"loading...")
 	thread.start_new_thread(main, ())
 else:
-	print "[!] Web View will not start: No output configured."
+	print_error(module,"Cannot start, no output configured.")

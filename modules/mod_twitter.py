@@ -19,6 +19,8 @@ from src.output import *
 from xml.dom import minidom
 import time, urllib
 
+execfile('src/getname')
+
 #Get configuration options
 count = check_config("MOD_TWITTER_COUNT=")
 interval = float(check_config("MOD_TWITTER_INTERVAL="))
@@ -41,19 +43,15 @@ def main(query,*args):
 		    id = e.getElementsByTagName("id")[0].firstChild.data.split(":")[2]
 		    name = e.getElementsByTagName("name")[0].firstChild.data.split(" ")[0]
 		    
-		    #Check for configured output, if not, write to console
-		    output_file_enable = check_config("OUTPUT_FILE")
-		    if output_file_enable == "ON":
-			try:
-		    		output_file("MOD_TWITTER: " + name + ": " + title + " [" + pub + "]")
-	 	    	except:
-				print "[!] MOD_TWITTER: Couldn't print line because it contains non-ASCII values."
-		    else:
-			print "MOD_TWITTER: " + name + ": " + title + " [" + pub + "]"
-	    time.sleep(interval)
+		    try:
+				send_output(module, name + ": " + title + " [" + pub + "]")
+	 	    except:
+				print_warning(module, "Couldn't print line because it contains non-ASCII values.")
+	    
+		time.sleep(interval)
 
 #Start the module
-print "[!] MOD_TWITTER: loading..."
+print_status(module,"loading...")
 keywords = get_keywords("mod_twitter")
 #Create a new thread for each search phrase
 for keyword in keywords:

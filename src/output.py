@@ -15,13 +15,17 @@ import os
 from core import *
 
 # Write output to a file specified in the config.
-def output_file(data):
-	path = check_config("OUTPUT_FILE_NAME=")
-	if not os.path.isfile(path):
-                outputfile = file(path, "w")
-                outputfile.write(data + "\n")
-                outputfile.close()
+def send_output(mod_name,data):
+	output_file_enable = check_config("OUTPUT_FILE")
+        if output_file_enable == "ON":
+		path = check_config("OUTPUT_FILE_NAME=")
+		if not os.path.isfile(path):
+                	outputfile = file(path, "w")
+		else:
+			outputfile = file(path, "a")
+                
+		outputfile.write(mod_name + ": " + data + "\n")
+        	outputfile.close()
+	#put other output conditions before else
 	else:
-		outputfile = file(path, "a")
-                outputfile.write(data + "\n")
-                outputfile.close()
+		print mod_name + ": " + data

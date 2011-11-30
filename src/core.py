@@ -12,6 +12,24 @@
 #########################################################################
 
 import os,re,sys
+execfile('src/getname')
+
+# Print Colored Error Messages
+def print_error(mod_name,msg):
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        print FAIL + "\n[!] Error: " + mod_name + ": " + msg + ENDC
+
+# Print Colored Warning Messages
+def print_warning(mod_name,msg):
+        WARNING = '\033[93m'
+        ENDC = '\033[0m'
+        print WARNING + "\n[!] Warning: " + mod_name + ": " + msg + ENDC
+
+# Print Status Messages
+def print_status(mod_name,msg):
+        print "[*]: " + mod_name + ": " + msg
+
 
 # Get configuation options from the config file.
 def check_config(param):
@@ -19,7 +37,7 @@ def check_config(param):
 	try:
         	fileopen = file(path, "r")
 	except:
-		print "[!] Error: Cannot find config file. Make sure its in the spicymango directory.\n"
+		print_error(module,"Cannot find the configuration file.")
 		sys.exit()
         # iterate through lines in file
         for line in fileopen:
@@ -37,7 +55,7 @@ def get_keywords(param):
         try:
                 fileopen = file(path, "r")
         except:
-                print "[!] Error: Cannot find keywords file. Make sure its in the spicymango directory.\n"
+                print_error(module,"Cannot find keywords file. Make sure its in the spicymango directory.")
 		sys.exit()
 	wordlist = []
         # iterate through lines in file
