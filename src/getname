@@ -1,5 +1,6 @@
 import os
 
+#Code to dynamically get the name of the script/module. Must be called with execfile().
 def modname():
         mod_name = os.path.basename(__file__)
         mod_name = mod_name.split(".")

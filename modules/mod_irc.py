@@ -19,6 +19,7 @@ sys.path.append("..")
 from src.core import *
 from src.output import *
 
+#Read in code to dynamically get the name of the module.
 execfile('src/getname')
 
 def main():
@@ -28,22 +29,25 @@ def main():
 	irc_user = check_config("MOD_IRC_USER=")
 
 	def handle_state(newstate):
-	    # If connected, join the channels listed in the config file
+	    #If connected, join the channels listed in the config file
 	    if newstate==4:
 		channels = irc_channels.split(',')
 		for channel in channels:
 	        	MyConn.send_string("JOIN #" + channel)
 			print_status(module,"Joined channel #" + channel)
-
+	
+	#Hanle for Raw input...can be used to debug module.
 	def handle_raw(line):
 	    print line
 
 	def handle_parsed(prefix, command, params):
 	    if command=="PRIVMSG":
+		#Pull in keywords for module.
 		keywords = get_keywords("mod_irc")
 		for keyword in keywords:
 			hit = re.search(keyword[1], params[1])
 			if hit:
+				#If a match, send the output.
 				send_output(module, prefix + " : " + params[0] + " : " + params[1])
        
 	MyIRC=irc.IRC_Object( )

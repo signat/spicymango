@@ -12,6 +12,8 @@
 #########################################################################
 
 import os,re,sys
+
+#Read in code to dynamically get the name of this module.
 execfile('src/getname')
 
 # Print Colored Error Messages

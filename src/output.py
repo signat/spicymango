@@ -14,7 +14,7 @@
 import os
 from core import *
 
-# Write output to a file specified in the config.
+# Write output to each source specified in the config.
 def send_output(mod_name,data):
 	output_file_enable = check_config("OUTPUT_FILE")
         if output_file_enable == "ON":
@@ -26,6 +26,7 @@ def send_output(mod_name,data):
                 
 		outputfile.write(mod_name + ": " + data + "\n")
         	outputfile.close()
-	#put other output conditions before else
+	
+	#Put other output sources before else statement.
 	else:
 		print mod_name + ": " + data

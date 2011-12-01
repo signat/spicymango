@@ -18,6 +18,7 @@ sys.path.append("..")
 from src.bottle import route, run, template, static_file
 from src.core import *
 
+#Read code to dynamically get name of this module.
 execfile('src/getname')
 
 def main():
@@ -32,20 +33,24 @@ def main():
 		display_main = template('base')
 		return display_main
 	
+	#Route for the AJAX call to get data from a file
 	@route('/get_data_table')
 	def data_table_view():
                 filelines = reversed(open(outfile).readlines())
                 display_datatable = template('get_data', lines=filelines)
                 return display_datatable
 
+	#Route for png images
 	@route('/images/:filename#.*\.png#')
 	def send_image(filename):
     		return static_file(filename, root='web/images/', mimetype='image/png')
 
+	#Route for style sheets
 	@route('/css/:filename#.*\.css#')
         def send_image(filename):
                 return static_file(filename, root='web/css/')
 
+	#Route for javascript
 	@route('/js/:filename#.*\.js#')
         def send_image(filename):
                 return static_file(filename, root='web/js/')
