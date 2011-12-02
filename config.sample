@@ -53,4 +53,4 @@ MOD_TWITTER_INTERVAL=5
 # Output to file
 OUTPUT_FILE=OFF
 # Specify FULL output file path
-OUTPUT_FILE_NAME="/full/path/to/ouputfile"
+OUTPUT_FILE_NAME="/full/path/to/outputfile"

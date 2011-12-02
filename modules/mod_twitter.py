@@ -40,11 +40,11 @@ def main(query,*args):
 			entries.reverse()
 			#If entries, interate through entries and output results.
 			for e in entries:
-		    		title = e.getElementsByTagName("title")[0].firstChild.data
+				title = e.getElementsByTagName("title")[0].firstChild.data.replace("\n", "")
 		    		pub = e.getElementsByTagName("published")[0].firstChild.data
 		    		id = e.getElementsByTagName("id")[0].firstChild.data.split(":")[2]
 		    		name = e.getElementsByTagName("name")[0].firstChild.data.split(" ")[0]
-		    		#Try output...non-ascii will through an exception.
+		    		#Try output...non-ascii will throw an exception.
 		 		try:
 					send_output(module, name + ": " + title + " [" + pub + "]")
 	 	    		except:
