@@ -11,22 +11,36 @@
 #
 #########################################################################
 
-import os
+import os,sys
 from core import *
 
-# Write output to each source specified in the config.
-def send_output(mod_name,data):
-	output_file_enable = check_config("OUTPUT_FILE")
-        if output_file_enable == "ON":
-		path = check_config("OUTPUT_FILE_NAME=")
-		if not os.path.isfile(path):
-                	outputfile = file(path, "w")
-		else:
-			outputfile = file(path, "a")
-                
-		outputfile.write(mod_name + ": " + data + "\n")
-        	outputfile.close()
+class Output(object):
+	#Define all attributes for module output
+        modname = None
+        msg = None
 	
-	#Put other output sources before else statement.
-	else:
-		print mod_name + ": " + data
+	#Method to send output to various enabled destinations
+        def send_output(self):
+		#Method function for writing to a file
+                def to_File():
+                        path = check_config("OUTPUT_FILE_NAME=")
+                	if not os.path.isfile(path):
+                        	outputfile = file(path, "w")
+                	else:
+                       		outputfile = file(path, "a")
+
+                	outputfile.write(self.modname + ": " + self.msg + "\n")
+                	outputfile.close()
+
+                
+		#Check config and send output where enabled, but first make sure required attributes are set.
+		if self.modname is None:
+			print_error("Output", "modname attribute must be defined in instance")
+		
+		file_enable = check_config("OUTPUT_FILE")
+        	if file_enable == "ON":
+			to_File()
+		
+		#If no output destinations are defined in config, send output to console
+		else:
+			print self.modname + ": " + self.msg

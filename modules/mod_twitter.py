@@ -44,9 +44,12 @@ def main(query,*args):
 		    		pub = e.getElementsByTagName("published")[0].firstChild.data
 		    		id = e.getElementsByTagName("id")[0].firstChild.data.split(":")[2]
 		    		name = e.getElementsByTagName("name")[0].firstChild.data.split(" ")[0]
-		    		#Try output...non-ascii will throw an exception.
+		    		#Try output...non-ascii will throw an exception otherwise.
 		 		try:
-					send_output(module, name + ": " + title + " [" + pub + "]")
+					modOutput = Output()
+					modOutput.modname = module
+					modOutput.msg = name + ": " + title + " [" + pub + "]"
+					modOutput.send_output()
 	 	    		except:
 					print_warning(module, "Couldn't print line because it contains non-ASCII values.")
 	    
