@@ -6,7 +6,8 @@
 	%else:
         	%return "oddrow"
 	%end
-%end	
+%end
+<table id="data-table">	
 %for line in lines:
 	%evenodd += 1
 	%r1 = r"(http://\S*(?=(]|\)|\b)))"
@@ -15,3 +16,4 @@
   	<td class="{{even(evenodd)}}">{{!line}}</td>
   </tr>
 %end
+</table>

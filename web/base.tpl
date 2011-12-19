@@ -7,7 +7,7 @@
 <body onload="javascript:autoReload();">
 <img src="images/spicy_logo.png" align="middle"><span id="version">v0.1</span>
 <br><br>
-<table id="data-table">
-</table>
+<div id="data">
+</div>
 </body>
 </html>
