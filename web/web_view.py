@@ -25,8 +25,7 @@ def main():
 	#Get config options
 	ip = check_config("WEB_VIEW_IP=")
 	port = check_config("WEB_VIEW_PORT=")
-	outfile = check_config("OUTPUT_FILE_NAME=")
-
+	
 	#Route for the webroot
 	@route('/')
 	def mainview():
@@ -36,8 +35,23 @@ def main():
 	#Route for the AJAX call to get data from a file
 	@route('/get_data_table')
 	def data_table_view():
-                filelines = reversed(open(outfile).readlines())
-                display_datatable = template('get_data', lines=filelines)
+		if check_config("WEB_VIEW_DATA_SRC=") == "FILE":
+			outfile = check_config("OUTPUT_FILE_NAME=")
+                	rowlines = reversed(open(outfile).readlines())
+			display_datatable = template('get_data_FILE', lines=rowlines)
+		elif check_config("WEB_VIEW_DATA_SRC=") == "SQLITE3":
+			import sqlite3, os
+			outdb = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			if not os.path.isfile(outdb):
+				print_error(module, "DB File does not exist")
+			else:
+				conn = sqlite3.connect(outdb)
+				c = conn.cursor()
+				c.execute("select * from spicymango")
+				rowlines = c
+			display_datatable = template('get_data_SQLITE3', lines=rowlines)
+		else:
+			print_error(module, "WEB_VIEW_DATA_SRC is not set or set incorrectly in the config file")
                 return display_datatable
 
 	#Route for png images
@@ -60,8 +74,9 @@ def main():
 	run(port=port, host=ip, quiet="True")
 
 #If the output file option is not set in the config, don't run.
-check_output = check_config("OUTPUT_FILE=")
-if check_output == 'ON':
+check_outputfile = check_config("OUTPUT_FILE=")
+check_outputsqlitedb = check_config("OUTPUT_SQLITE3")
+if check_outputfile == "ON" or check_outputsqlitedb == "ON":
 	print_status(module,"loading...")
 	thread.start_new_thread(main, ())
 else:
