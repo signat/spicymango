@@ -12,8 +12,8 @@
 	%evenodd += 1
 	%r1 = r"(http://\S*(?=(]|\)|\b)))"
 	%line = re.sub(r1,r'<a rel="nofollow" target="_blank" href="\1">\1</a>',line)
-  <tr>
-  	<td class="{{even(evenodd)}}">{{!line}}</td>
+  <tr class="{{even(evenodd)}}">
+  	<td>{{!line}}</td>
   </tr>
 %end
 </table>

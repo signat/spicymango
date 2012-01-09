@@ -50,7 +50,10 @@ def main():
 				#If a match, send the output.
 				modOutput = Output()
 				modOutput.modname = module
-				modOutput.msg = prefix + " : " + params[0] + " : " + params[1]
+				modOutput.username = prefix.split('!')[0]
+				modOutput.hostname = prefix.split('@')[1]
+				modOutput.ircchan = params[0]
+				modOutput.msg = params[1]
 				modOutput.send_output()
        
 	MyIRC=irc.IRC_Object( )

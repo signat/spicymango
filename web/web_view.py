@@ -47,7 +47,7 @@ def main():
 			else:
 				conn = sqlite3.connect(outdb)
 				c = conn.cursor()
-				c.execute("select * from spicymango")
+				c.execute("SELECT * FROM spicymango ORDER BY id DESC LIMIT 50")
 				rowlines = c
 			display_datatable = template('get_data_SQLITE3', lines=rowlines)
 		else:

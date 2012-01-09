@@ -7,14 +7,21 @@
         	%return "oddrow"
 	%end
 %end
-<table id="data-table">	
+<table id="data-table">
+<tr class="titles"><td>TimeStamp</td><td>Module</td><td>Username</td><td>Hostname</td><td>IRC Channel</td><td>Message</td></tr>	
 %for line in lines:
-	%line = line[0] + ": " + line[1]
-	%evenodd += 1
+	<tr class="{{even(evenodd)}}">
+	<td>{{line[5]}}</td>
+	<td>{{line[0]}}</td>
+	<td>{{line[1]}}</td>
+	<td>{{line[2]}}</td>
+	<td>{{line[3]}}</td>
+	%linemsg = line[4]
 	%r1 = r"(http://\S*(?=(]|\)|\b)))"
-	%line = re.sub(r1,r'<a rel="nofollow" target="_blank" href="\1">\1</a>',line)
-  <tr>
-  	<td class="{{even(evenodd)}}">{{!line}}</td>
-  </tr>
+	%linemsg = re.sub(r1,r'<a rel="nofollow" target="_blank" href="\1">\1</a>',linemsg)
+	<td>{{!linemsg}}</td>
+	</tr>
+
+	%evenodd += 1
 %end
 </table>

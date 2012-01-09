@@ -23,10 +23,14 @@ body {
 #data-table td {
 	padding: 4px;
 }
-td.evenrow {
+tr.evenrow {
 	background-color: #dddddd;
 }
-td.oddrow {
+tr.oddrow {
 	background-color: #d4d4d4;
 }
 
+tr.titles {
+	background-color: #333333;
+	color: #b5afaf;
+}

@@ -48,10 +48,12 @@ def main(query,*args):
 		 		try:
 					modOutput = Output()
 					modOutput.modname = module
-					modOutput.msg = name + ": " + title + " [" + pub + "]"
+					modOutput.username = name
+					modOutput.msg = title
 					modOutput.send_output()
-	 	    		except:
-					print_warning(module, "Couldn't print line because it contains non-ASCII values.")
+	 	    		except UnicodeEncodeError:
+					pass
+					#print_warning(module, "Couldn't print line because it contains non-ASCII values.")
 	    
 		#Set delay should be at least 5 seconds.
 		time.sleep(interval)

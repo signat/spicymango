@@ -11,13 +11,22 @@
 #
 #########################################################################
 
-import os,sys
+import os,sys,datetime
 from core import *
+from string import printable
+
+def rmNonprint(myStr):
+	filtered_string = ''.join(filter(lambda x: x in printable, myStr))
+	return filtered_string
 
 class Output(object):
 	#Define all attributes for module output
-        modname = None
-        msg = None
+        modname = ''
+        username = ''
+	hostname = ''
+	ircchan = ''
+	msg = ''
+	
 	
 	#Method to send output to various enabled destinations
         def send_output(self):
@@ -29,7 +38,16 @@ class Output(object):
                 	else:
                        		outputfile = file(path, "a")
 
-                	outputfile.write(self.modname + ": " + self.msg + "\n")
+			outString = str(datetime.datetime.now()) + ": " + rmNonprint(self.modname)
+			if self.username != '':
+				outString += ": " + rmNonprint(self.username)
+			if self.hostname != '':
+                                outString += ": " + rmNonprint(self.hostname)
+			if self.ircchan != '':
+                                outString += ": " + rmNonprint(self.ircchan)
+			if self.msg != '':
+                                outString += ": " + rmNonprint(self.msg)
+                	outputfile.write(outString + "\n")
                 	outputfile.close()
 		def to_Sqlite3():
 			import sqlite3
@@ -37,11 +55,12 @@ class Output(object):
 			if not os.path.isfile(path):
 				conn = sqlite3.connect(path)
 				c = conn.cursor()
-				c.execute('create table spicymango (modname text, msg text)')
+				c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT, hostname TEXT, ircchan TEXT, msg TEXT, timeStamp DATE, id INTERGER PRIMARY KEY)')
 			else:
 				conn = sqlite3.connect(path)
 				c = conn.cursor()
-			c.execute("insert into spicymango values ('" + self.modname + "','" + self.msg + "')")
+			sql = "INSERT INTO spicymango VALUES (?, ?, ?, ?, ?, ?, NULL)"
+			c.execute(sql, (rmNonprint(self.modname), rmNonprint(self.username), rmNonprint(self.hostname), rmNonprint(self.ircchan), rmNonprint(self.msg), datetime.datetime.now()))
 			conn.commit()
 			c.close()
 			                
@@ -62,4 +81,14 @@ class Output(object):
 			output_count = 1
 		#If no output destinations are defined in config, send output to console
 		if output_count == 0 or check_config("OUTPUT_CONSOLE=") == "ON":
-			print '\033[94m' + self.modname + ": " + '\033[0m' + self.msg
+                        conString = ''
+			if self.username != '':
+                                conString += ": " + rmNonprint(self.username)
+                        if self.hostname != '':
+                                conString += ": " + rmNonprint(self.hostname)
+                        if self.ircchan != '':
+                                conString += ": " + rmNonprint(self.ircchan)
+                        if self.msg != '':
+                                conString += ": " + rmNonprint(self.msg)
+
+			print '\033[94m' + rmNonprint(self.modname) + ": " + '\033[0m' + str(datetime.datetime.now()) + conString
