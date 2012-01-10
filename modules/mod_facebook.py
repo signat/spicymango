@@ -1,9 +1,9 @@
 #########################################################################
 #
-# Twitter Module for SpicyMango
+# Facebook Module for SpicyMango
 # Author(s): Chris Centore, Jason Gunnoe
 #
-# Description: This module queries Twitter using its API and returns the
+# Description: This module queries Facebook using its graph API and returns the
 #	       results to the specified output.  
 #
 # SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
@@ -22,7 +22,6 @@ import json, urllib2, time
 execfile('src/getname')
 
 #Get configuration options
-#count = check_config("MOD_TWITTER_COUNT=")
 interval = int(check_config("MOD_FACEBOOK_INTERVAL="))
 
 def main(query,*args):
@@ -34,6 +33,7 @@ def main(query,*args):
 
             data = json.load(urllib2.urlopen(url))
 
+#            Enable this print to see the raw data dump for troubleshooting
 #            print json.dumps(data)
 
             for post in data['data']:
@@ -46,14 +46,8 @@ def main(query,*args):
                     	except KeyError:
                     		pass
 			modOutput.send_output()
-
-
-
-
-#####
-#print_warning(module, "Couldn't print line because it contains non-ASCII values.")
 	    
-		#Set delay should be at least 5 seconds.
+            #Set delay should be at least 5 seconds maybe more for facebook.
 	    time.sleep(interval)
 
 #Start the module
