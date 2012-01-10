@@ -21,3 +21,6 @@
 
 # mod_twitter uses the search operators in the Twitter API
 ['mod_twitter','spicy']
+
+# mod_facebook queries the Facebook graph API
+['mod_facebook','spicy']

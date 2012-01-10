@@ -33,6 +33,10 @@ enable_modtwitter = check_config("MOD_TWITTER=")
 if enable_modtwitter == 'ON':
         import modules.mod_twitter
 	mod_counter += 1
+enable_modfacebook = check_config("MOD_FACEBOOK=")
+if enable_modfacebook == 'ON':
+        import modules.mod_facebook
+	mod_counter += 1
 #If no modules are enabled in the config, error and exit.
 if mod_counter == 0:
 	print_error(module,"Please enable a module in the config file.")
