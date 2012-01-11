@@ -48,8 +48,8 @@ MOD_TWITTER_COUNT=5
 # Set the interval (in seconds) that MOD_TWITTER will query the api
 MOD_TWITTER_INTERVAL=5
 
-# MOD_FBSEARCH by: Jason Gunnoe
-# Searches Facebook using its API
+# MOD_FACEBOOK by: Jason Gunnoe
+# Searches Facebook using its graph API
 #########################################################################
 # Enable Facebook search module
 MOD_FACEBOOK=OFF

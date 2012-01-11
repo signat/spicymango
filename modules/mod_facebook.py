@@ -1,7 +1,7 @@
 #########################################################################
 #
 # Facebook Module for SpicyMango
-# Author(s): Chris Centore, Jason Gunnoe
+# Author(s): Jason Gunnoe
 #
 # Description: This module queries Facebook using its graph API and returns the
 #	       results to the specified output.  
@@ -28,27 +28,25 @@ def main(query,*args):
 	global interval
 	while True:
             
+		url = "http://graph.facebook.com/search?q=%s&type=post" % (query) 
+		data = json.load(urllib2.urlopen(url))
 
-            url = "http://graph.facebook.com/search?q=%s&type=post" % (query) 
+		#Enable this print to see the raw data dump for troubleshooting
+		#print json.dumps(data)
 
-            data = json.load(urllib2.urlopen(url))
-
-#            Enable this print to see the raw data dump for troubleshooting
-#            print json.dumps(data)
-
-            for post in data['data']:
-                if post['type'] == 'link':
-			modOutput = Output()
-                    	modOutput.modname = module
-                    	modOutput.username = post['from']['name']
-                   	try:
-				modOutput.msg = post['message']
-                    	except KeyError:
-                    		pass
-			modOutput.send_output()
+            	for post in data['data']:
+                	if post['type'] == 'link':
+				try:
+					modOutput = Output()
+                    			modOutput.modname = module
+                    			modOutput.username = post['from']['name']
+					modOutput.msg = post['message']
+					modOutput.send_output()
+                    		except KeyError:
+                    			pass
 	    
-            #Set delay should be at least 5 seconds maybe more for facebook.
-	    time.sleep(interval)
+		#Set delay should be at least 5 seconds maybe more for facebook
+		time.sleep(interval)
 
 #Start the module
 print_status(module,"loading...")
