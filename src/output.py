@@ -11,7 +11,7 @@
 #
 #########################################################################
 
-import os,sys,datetime
+import os,sys,datetime,time
 from core import *
 from string import printable
 
@@ -50,12 +50,25 @@ class Output(object):
                 	outputfile.write(outString + "\n")
                 	outputfile.close()
 		def to_Sqlite3():
-			import sqlite3
+			import sqlite3, hashlib
+			
+			# Generate hash to insert into the DB so only unique records get added.
+			hash = hashlib.md5()
+			hash.update(rmNonprint(self.modname))
+			hash.update(rmNonprint(self.username))
+			hash.update(rmNonprint(self.hostname))
+			hash.update(rmNonprint(self.ircchan))
+			hash.update(rmNonprint(self.msg))
+
 			path = check_config("OUTPUT_SQLITE3_DB_PATH=")
 			conn = sqlite3.connect(path)
 			c = conn.cursor()
-			sql = "INSERT INTO spicymango VALUES (?, ?, ?, ?, ?, ?, NULL)"
-			c.execute(sql, (rmNonprint(self.modname), rmNonprint(self.username), rmNonprint(self.hostname), rmNonprint(self.ircchan), rmNonprint(self.msg), datetime.datetime.now()))
+			sql = "INSERT OR REPLACE INTO spicymango VALUES (?, ?, ?, ?, ?, ?, ?, NULL)"
+			try:
+				c.execute(sql, (rmNonprint(self.modname), rmNonprint(self.username), rmNonprint(self.hostname), rmNonprint(self.ircchan), rmNonprint(self.msg), datetime.datetime.now(), hash.hexdigest()))
+			except sqlite3.OperationalError:
+				print_error(module, "Database Locked...skipping record.")
+			
 			conn.commit()
 			c.close()
 			                
