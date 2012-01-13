@@ -52,13 +52,8 @@ class Output(object):
 		def to_Sqlite3():
 			import sqlite3
 			path = check_config("OUTPUT_SQLITE3_DB_PATH=")
-			if not os.path.isfile(path):
-				conn = sqlite3.connect(path)
-				c = conn.cursor()
-				c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT, hostname TEXT, ircchan TEXT, msg TEXT, timeStamp DATE, id INTERGER PRIMARY KEY)')
-			else:
-				conn = sqlite3.connect(path)
-				c = conn.cursor()
+			conn = sqlite3.connect(path)
+			c = conn.cursor()
 			sql = "INSERT INTO spicymango VALUES (?, ?, ?, ?, ?, ?, NULL)"
 			c.execute(sql, (rmNonprint(self.modname), rmNonprint(self.username), rmNonprint(self.hostname), rmNonprint(self.ircchan), rmNonprint(self.msg), datetime.datetime.now()))
 			conn.commit()

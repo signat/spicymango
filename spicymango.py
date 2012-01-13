@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys,time
+import sys,time, sqlite3
 from src.core import *
 
 #Read code to dynamically call the name of this script.
@@ -20,6 +20,24 @@ print "Written by: Chris Centore, Steve Swann, Jason Gunnoe"
 print "Website: http://code.google.com/p/spicymango/"
 print "Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/"
 print ""
+
+# First setup configured output destinations
+# If configured and doesn't exist, setup output file
+if check_config("OUTPUT_FILE=") == 'ON':
+	path = check_config("OUTPUT_FILE_NAME=")
+	if not os.path.isfile(path):
+		outputfile = file(path, "w")
+		outputfile.close()
+
+# If configured and doesn't exist, setup output DB
+if check_config("OUTPUT_SQLITE3=") == 'ON':
+	path = check_config("OUTPUT_SQLITE3_DB_PATH=")
+	if not os.path.isfile(path):
+		conn = sqlite3.connect(path)
+		c = conn.cursor()
+		c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT, hostname TEXT, ircchan TEXT, msg TEXT, timeStamp DATE, id INTERGER PRIMARY KEY)')
+		conn.commit()
+		c.close()
 
 # Setup counter for determining how many modules are loaded at runtime.
 mod_counter = 0
