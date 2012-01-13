@@ -45,7 +45,7 @@ MOD_TWITTER=OFF
 # How many post to query at a time
 MOD_TWITTER_COUNT=5
 
-# Set the interval (in seconds) that MOD_TWITTER will query the api
+# Set the interval (in seconds) that MOD_TWITTER will query the api; Increase if using many keyword terms.
 MOD_TWITTER_INTERVAL=5
 
 # MOD_FACEBOOK by: Jason Gunnoe

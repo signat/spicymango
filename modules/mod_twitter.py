@@ -17,6 +17,7 @@ sys.path.append("..")
 from src.core import *
 from src.output import *
 from xml.dom import minidom
+from xml.parsers import expat
 import time, urllib
 
 #Read in code to dynamically get the module name.
@@ -31,30 +32,33 @@ def main(query,*args):
 	global count, interval
 	while True:
 
-		url = "http://search.twitter.com/search.atom?rpp=" + count + "&q=%s&since_id=%s" % (query, id)
-		xml = urllib.urlopen(url)
-		doc = minidom.parse(xml)
-		entries = doc.getElementsByTagName("entry")
+		try:
+			url = "http://search.twitter.com/search.atom?rpp=" + count + "&q=%s&since_id=%s" % (query, id)
+			xml = urllib.urlopen(url)
+			doc = minidom.parse(xml)
+			entries = doc.getElementsByTagName("entry")
 
-		if len(entries) > 0:
-			entries.reverse()
-			#If entries, interate through entries and output results.
-			for e in entries:
-				title = e.getElementsByTagName("title")[0].firstChild.data.replace("\n", "")
-		    		pub = e.getElementsByTagName("published")[0].firstChild.data
-		    		id = e.getElementsByTagName("id")[0].firstChild.data.split(":")[2]
-		    		name = e.getElementsByTagName("name")[0].firstChild.data.split(" ")[0]
-		    		#Try output...non-ascii will throw an exception otherwise.
-		 		try:
-					modOutput = Output()
-					modOutput.modname = module
-					modOutput.username = name
-					modOutput.msg = title
-					modOutput.send_output()
-	 	    		except UnicodeEncodeError:
-					pass
-					#print_warning(module, "Couldn't print line because it contains non-ASCII values.")
-	    
+			if len(entries) > 0:
+				entries.reverse()
+				#If entries, interate through entries and output results.
+				for e in entries:
+					title = e.getElementsByTagName("title")[0].firstChild.data.replace("\n", "")
+		    			pub = e.getElementsByTagName("published")[0].firstChild.data
+		    			id = e.getElementsByTagName("id")[0].firstChild.data.split(":")[2]
+		    			name = e.getElementsByTagName("name")[0].firstChild.data.split(" ")[0]
+		    			#Try output...non-ascii will throw an exception otherwise.
+		 			try:
+						modOutput = Output()
+						modOutput.modname = module
+						modOutput.username = name
+						modOutput.msg = title
+						modOutput.send_output()
+	 	    			except UnicodeEncodeError:
+						pass
+						#print_warning(module, "Couldn't print line because it contains non-ASCII values.
+		except expat.ExpatError:
+			print_warning(module, "Rate limit exceeded...delaying 120 seconds.")
+			time.sleep(120)
 		#Set delay should be at least 5 seconds.
 		time.sleep(interval)
 
