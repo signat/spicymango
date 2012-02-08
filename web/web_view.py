@@ -15,7 +15,7 @@
 
 import thread,sys
 sys.path.append("..")
-from src.bottle import route, run, template, static_file, request
+from src.bottle import route, run, template, static_file, request, response, redirect, post
 from src.core import *
 
 #Read code to dynamically get name of this module.
@@ -30,8 +30,23 @@ def main():
 	@route('/')
 	def mainview():
 		display_main = template('base')
-		return display_main
+		if request.get_cookie("loggedin", secret='sm2345-45634'):
+			return display_main
+		else:
+			redirect('/login')
+
+	@route('/login')
+	def login():
+		return "<form action='/login-check' method='POST'>Username: <input type=text name=user><br>Password: <input type=text name=pass><br><input type=submit value=Enter></form>"
 	
+	@post('/login-check')
+	def logincheck():
+		if request.forms.get('user') == 'smadmin' and request.forms.get('pass') == 'sm1234':
+                        response.set_cookie("loggedin", "Success", secret='sm2345-45634')
+                        redirect('/')
+		else:
+			redirect('/login')
+
 	#Route for the AJAX call to get data from a file
 	@route('/get_data_table')
 	def data_table_view():
@@ -57,7 +72,11 @@ def main():
 			display_datatable = template('get_data_SQLITE3', lines=rowlines)
 		else:
 			print_error(module, "WEB_VIEW_DATA_SRC is not set or set incorrectly in the config file")
-                return display_datatable		
+                
+		if request.get_cookie("loggedin", secret='sm2345-45634'):
+                        return display_datatable
+                else:
+                        redirect('/login')	
 
 	#Route for png images
 	@route('/images/:filename#.*\.png#')

@@ -9,14 +9,14 @@
 <br><br>
 <div align=right>
         <form id="filter">
-	<select id="field">
-		<option value="modname">Module</option>
-		<option value="username">Username</option>
-		<option value="hostname">Hostname</option>
-		<option value=ircchan>IRC Channel</option>
-		<option value="msg">Message</option>
-	</select>
-	<input type=text id="term">
+		<select id="field">
+			<option value="modname">Module</option>
+			<option value="username">Username</option>
+			<option value="hostname">Hostname</option>
+			<option value=ircchan>IRC Channel</option>
+			<option value="msg">Message</option>
+		</select>
+		<input type=text id="term">
                 <a href="javascript: set_Filter()">Filter</a>
         </form>
 </div>
