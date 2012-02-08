@@ -1,5 +1,3 @@
-var doReload;
-var doFilter;
 var q;
 
 function showData()
@@ -25,7 +23,7 @@ xmlhttp.send();
 function autoReload()
 {
 	showData();
-	doReload = setTimeout("autoReload()", 5000);
+	setTimeout("autoReload()", 5000);
 }
 
 function set_Filter()
