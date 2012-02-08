@@ -15,7 +15,7 @@
 
 import thread,sys
 sys.path.append("..")
-from src.bottle import route, run, template, static_file
+from src.bottle import route, run, template, static_file, request
 from src.core import *
 
 #Read code to dynamically get name of this module.
@@ -45,14 +45,19 @@ def main():
 			if not os.path.isfile(outdb):
 				print_error(module, "DB File does not exist")
 			else:
+				if request.query.field:
+					sqlquery = "SELECT * FROM spicymango WHERE " + request.query.field + " LIKE '%" + request.query.term + "%' ORDER BY id DESC LIMIT 50"
+				else:
+					sqlquery = "SELECT * FROM spicymango ORDER BY id DESC LIMIT 50"
+
 				conn = sqlite3.connect(outdb)
 				c = conn.cursor()
-				c.execute("SELECT * FROM spicymango ORDER BY id DESC LIMIT 50")
+				c.execute(sqlquery)
 				rowlines = c
 			display_datatable = template('get_data_SQLITE3', lines=rowlines)
 		else:
 			print_error(module, "WEB_VIEW_DATA_SRC is not set or set incorrectly in the config file")
-                return display_datatable
+                return display_datatable		
 
 	#Route for png images
 	@route('/images/:filename#.*\.png#')

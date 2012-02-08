@@ -1,5 +1,14 @@
+var doReload;
+var doFilter;
+var q;
+
 function showData()
 {
+var rand;
+if (q == undefined){
+	q = '';
+}
+rand  = new Date().getTime();
 var xmlhttp;
 xmlhttp=new XMLHttpRequest();
 xmlhttp.onreadystatechange=function()
@@ -9,12 +18,25 @@ xmlhttp.onreadystatechange=function()
     document.getElementById("data").innerHTML=xmlhttp.responseText;
     }
   }
-xmlhttp.open("GET","get_data_table", true);
+xmlhttp.open("GET","get_data_table?"+q+"rand="+rand, true);
 xmlhttp.send();
 }
 
 function autoReload()
 {
 	showData();
-	setTimeout("autoReload()", 5000);
+	doReload = setTimeout("autoReload()", 5000);
+}
+
+function set_Filter()
+{
+	var field;
+	var term;
+	var query;
+
+	field = document.getElementById('field').value;
+	term = document.getElementById('term').value;
+	query = "field=" + field + "&term=" + term + "&"
+	
+	q = query; 
 }
