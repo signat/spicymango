@@ -63,7 +63,7 @@ def main():
 				if request.query.count and request.query.count != "all":
 					countnum = " LIMIT " + request.query.count
 				elif request.query.count == "all":
-					countnum = None
+					countnum = ""
 				else:
 					countnum = " LIMIT 50"
 				if request.query.field:
