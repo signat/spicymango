@@ -60,14 +60,16 @@ def main():
 			if not os.path.isfile(outdb):
 				print_error(module, "DB File does not exist")
 			else:
-				if request.query.count != "all":
+				if request.query.count and request.query.count != "all":
 					countnum = " LIMIT " + request.query.count
 				elif request.query.count == "all":
 					countnum = None
+				else:
+					countnum = " LIMIT 50"
 				if request.query.field:
 					sqlquery = "SELECT * FROM spicymango WHERE " + request.query.field + " LIKE '%" + request.query.term + "%' ORDER BY id DESC" + countnum
 				else:
-					sqlquery = "SELECT * FROM spicymango ORDER BY id DESC LIMIT 50"
+					sqlquery = "SELECT * FROM spicymango ORDER BY id DESC" + countnum
 
 				conn = sqlite3.connect(outdb)
 				c = conn.cursor()
