@@ -1,10 +1,15 @@
 var q;
+var reload;
+var count;
 
 function showData()
 {
 var rand;
 if (q == undefined){
 	q = '';
+}
+if (count == undefined){
+	count = '50';
 }
 rand  = new Date().getTime();
 var xmlhttp;
@@ -16,25 +21,35 @@ xmlhttp.onreadystatechange=function()
     document.getElementById("data").innerHTML=xmlhttp.responseText;
     }
   }
-xmlhttp.open("GET","get_data_table?"+q+"rand="+rand, true);
+xmlhttp.open("GET","get_data_table?"+q+"rand="+rand+"&count="+count, true);
 xmlhttp.send();
 }
 
 function autoReload()
 {
 	showData();
-	setTimeout("autoReload()", 5000);
+	reload = setTimeout("autoReload()", 5000);
 }
 
 function set_Filter()
 {
 	var field;
 	var term;
+	var count;
 	var query;
 
 	field = document.getElementById('field').value;
 	term = document.getElementById('term').value;
 	query = "field=" + field + "&term=" + term + "&"
 	
-	q = query; 
+	q = query;
+	clearTimeout(reload);
+	autoReload(); 
+}
+
+function set_Count()
+{
+	count = document.getElementById('count').value;
+	clearTimeout(reload);
+        autoReload();
 }
