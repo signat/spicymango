@@ -63,9 +63,9 @@ def main():
 				if request.query.count != "all":
 					countnum = " LIMIT " + request.query.count
 				elif request.query.count == "all":
-					countnum = ""
+					countnum = None
 				if request.query.field:
-					sqlquery = "SELECT * FROM spicymango WHERE " + request.query.field + " LIKE '%" + request.query.term + "%' ORDER BY id" + countnum
+					sqlquery = "SELECT * FROM spicymango WHERE " + request.query.field + " LIKE '%" + request.query.term + "%' ORDER BY id DESC" + countnum
 				else:
 					sqlquery = "SELECT * FROM spicymango ORDER BY id DESC LIMIT 50"
 
