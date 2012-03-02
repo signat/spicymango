@@ -1,0 +1,19 @@
+label {
+	float: left;
+	text-align: right;
+	margin-right: 15px;
+	width: 100px;
+	color: #d0d0d0;
+	font-size: 14px;
+}		
+
+#login-box {
+	width: 320px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -160px;
+	margin-top: -260px;
+	font-family: "Segoe UI, Arial, sans-serif";
+	font-weight: bold;
+}

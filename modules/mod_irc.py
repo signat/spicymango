@@ -13,7 +13,7 @@
 #
 #########################################################################
 
-import thread,sys,re
+import thread,sys,re,time
 from includes import irc
 sys.path.append("..")
 from src.core import *
@@ -55,6 +55,11 @@ def main():
 				modOutput.ircchan = params[0]
 				modOutput.msg = params[1]
 				modOutput.send_output()
+	    if command=="KICK":
+			print_warning(module, "Uh oh, you have been kicked from " + params[0] + ". Waiting 60 seconds until attempting to rejoin.")
+			time.sleep(60)
+			MyConn.send_string("JOIN " + params[0])
+			print_status(module,"Joined channel " + params[0])
        
 	MyIRC=irc.IRC_Object( )
 	MyConn=MyIRC.new_connection( )
@@ -66,7 +71,7 @@ def main():
 
 	MyConn.events['state'].add_listener(handle_state)
 	#Enable to debug only
-	# MyConn.events['raw'].add_listener(handle_raw)
+	#MyConn.events['raw'].add_listener(handle_raw)
 	MyConn.events['parsed'].add_listener(handle_parsed)
 
 	while 1:

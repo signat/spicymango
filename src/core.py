@@ -30,7 +30,7 @@ def print_warning(mod_name,msg):
 
 # Print Status Messages
 def print_status(mod_name,msg):
-        print "[*]: " + mod_name + ": " + msg
+        print "[*] " + mod_name + ": " + msg
 
 
 # Get configuation options from the config file.

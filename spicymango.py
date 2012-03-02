@@ -13,7 +13,7 @@ print "/ __|_ __(_)__ _  _|  \/  |__ _ _ _  __ _ ___"
 print "\__ \ '_ \ / _| || | |\/| / _` | ' \/ _` / _ \\"
 print "|___/ .__/_\__|\_, |_|  |_\__,_|_||_\__, \___/"
 print "    |_|        |__/                 |___/"     
-print "The Open Source Intelligence Analysis Tool"
+print "The Open Source Intelligence Analysis Engine"
 print ""
 print "SpicyMango v0.1 Alpha"
 print "Written by: Chris Centore, Steve Swann, Jason Gunnoe"
@@ -35,7 +35,7 @@ if check_config("OUTPUT_SQLITE3=") == 'ON':
 	if not os.path.isfile(path):
 		conn = sqlite3.connect(path)
 		c = conn.cursor()
-		c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT, hostname TEXT, ircchan TEXT, msg TEXT, timeStamp DATE, hash TEXT UNIQUE, id INTERGER PRIMARY KEY)')
+		c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT COLLATE NOCASE, hostname TEXT COLLATE NOCASE, ircchan TEXT, msg TEXT COLLATE NOCASE, timeStamp DATE, hash TEXT UNIQUE, id INTERGER PRIMARY KEY)')
 		conn.commit()
 		c.close()
 
