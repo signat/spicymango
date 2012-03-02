@@ -14,8 +14,6 @@
 WEB_VIEW=OFF
 WEB_VIEW_IP="127.0.0.1"
 WEB_VIEW_PORT=8080
-# WEB_VIEW_DATA_SRC accepts 'FILE' & 'SQLITE3'
-WEB_VIEW_DATA_SRC=FILE
 
 # MOD_IRC by: Chris Centore
 # Collects data from IRC channels
