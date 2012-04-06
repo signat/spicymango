@@ -1,4 +1,27 @@
 #!/usr/bin/env python
+#########################################################################
+# Filename: spicymango.py
+# Main program for SpicyMango
+# Copyright (C) 2011-2012 Chris Centore
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or any later 
+#    version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+# SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
+# Website: http://code.google.com/p/spicymango/
+# Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/
+#
+#########################################################################
 
 import sys,time, sqlite3
 from src.core import *
@@ -16,9 +39,11 @@ print "    |_|        |__/                 |___/"
 print "The Open Source Intelligence Analysis Engine"
 print ""
 print "SpicyMango v0.1 Alpha"
+print "Copyright (C) 2011-2012 Chris Centore"
 print "Written by: Chris Centore, Steve Swann, Jason Gunnoe"
 print "Website: http://code.google.com/p/spicymango/"
 print "Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/"
+print "Licensed under the GNU AGPLv3"
 print ""
 
 # First setup configured output destinations
