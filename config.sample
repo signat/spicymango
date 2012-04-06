@@ -1,6 +1,6 @@
 #########################################################################
 # Filename: config.sample
-# Configuration File for SpicyMango
+# Description: Configuration File for SpicyMango
 # Copyright (C) 2011-2012 Chris Centore
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -24,10 +24,11 @@
 
 # Global Configuration Options
 #########################################################################
-# Enable the web view (Very Experimental)
+# Enable and configure the web view
 WEB_VIEW=OFF
 WEB_VIEW_IP="127.0.0.1"
 WEB_VIEW_PORT=8080
+
 
 # MOD_IRC by: Chris Centore
 # Collects data from IRC channels
@@ -44,9 +45,6 @@ MOD_IRC_CHANNELS="spicymango","spicychan43"
 # IRC User
 MOD_IRC_USER="spicybot"
 
-# Number of entries to tail after a match on a keyword
-MOD_IRC_TAIL=5
-
 
 # MOD_TWITTER by: Jason Gunnoe
 # Searches Twitter using its API
@@ -59,6 +57,7 @@ MOD_TWITTER_COUNT=5
 
 # Set the interval (in seconds) that MOD_TWITTER will query the api; Increase if using many keyword terms.
 MOD_TWITTER_INTERVAL=5
+
 
 # MOD_FACEBOOK by: Jason Gunnoe
 # Searches Facebook using its graph API

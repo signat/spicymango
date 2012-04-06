@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #########################################################################
 # Filename: spicymango.py
-# Main program for SpicyMango
+# Description: Main program for SpicyMango
 # Copyright (C) 2011-2012 Chris Centore
 #
 #    This program is free software: you can redistribute it and/or modify

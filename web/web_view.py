@@ -1,11 +1,21 @@
 #########################################################################
+# Filename: web_view.py
+# Description: Invokes a stand-alone webserver to create an interactive
+#	       GUI to SpicyMango.
+# Copyright (C) 2011-2012 Chris Centore
 #
-# Web View Module for SpicyMango
-# Author: Chris Centore
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or any later 
+#    version.
 #
-# Description: (Experimental) The Web View is the intitial stages of a web
-#	       GUI for SpicyMango. Right now, it simply shows output sent to
-#	       to an output file in reverse order from most recent to last.
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
 # Website: http://code.google.com/p/spicymango/
