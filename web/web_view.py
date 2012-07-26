@@ -23,11 +23,12 @@
 #
 #########################################################################
 
-from __future__ import division
 import thread,sys
 sys.path.append("..")
 from src.bottle import route, run, template, static_file, request, response, redirect, post
 from src.core import *
+import sqlite3, datetime
+from time import strftime
 
 #Read code to dynamically get name of this module.
 execfile('src/getname')
@@ -40,93 +41,130 @@ def main():
 	#Route for the webroot
 	@route('/')
 	def mainview():
-		display_main = template('webview')
-		if request.get_cookie("loggedin", secret='sm2345-45634'):
-			return display_main
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+                	conn = sqlite3.connect(database)
+                	events = conn.cursor().execute('select count(id) from spicymango').fetchone()
+			high_events = conn.cursor().execute('select count(id) from alerts where weight >= 30').fetchone()
+			medium_events = conn.cursor().execute('select count(id) from alerts where weight between 10 and 30').fetchone()
+			low_events = conn.cursor().execute('select count(id) from alerts where weight <= 10').fetchone()
+			chart_highs = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight > 30 and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)").fetchall()
+			chart_mediums = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight between 10 and 30 and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)").fetchall()
+			chart_lows = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight < 10 and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)").fetchall()
+			recent_alls = conn.cursor().execute("select a.weight, s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id order by timeStamp DESC limit 7").fetchall()
+			recent_highs = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight >= 30 order by timeStamp DESC limit 7").fetchall()
+			recent_mediums = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight between 10 and 30 order by timeStamp DESC limit 7").fetchall()
+			recent_lows = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight <= 10 order by timeStamp DESC limit 7").fetchall()
+			top_users = conn.cursor().execute("select s.username, count(s.username) from spicymango s join alerts a on s.id = a.id group by username order by count(username) DESC LIMIT 5").fetchall()
+			top_alerts = conn.cursor().execute("select s.msg, a.weight from spicymango s join alerts a on s.id = a.id order by a.weight DESC LIMIT 5").fetchall()
+			top_keywords = conn.cursor().execute("select keyword, count from keywords order by count DESC LIMIT 5").fetchall()
+			conn.close()
+			
+			i = 0
+			last_12 = []
+			while i < 13:
+				d = datetime.datetime.now() - datetime.timedelta(hours=i)
+				hr = d.strftime("%H")
+				last_12.append(hr)
+				i += 1
+
+			last_12.reverse()
+			c_hours = ""
+			c_highs = ""
+			c_mediums = ""
+			c_lows = ""
+			for hour in last_12:
+				high_count = "0"
+				medium_count = "0"
+				low_count = "0"
+				for chigh in chart_highs:
+					if hour == chigh[1]:
+						high_count = str(chigh[0])
+				for cmedium in chart_mediums:
+					if hour == cmedium[1]:
+						medium_count = str(cmedium[0])
+				for clow in chart_lows:
+					if hour == clow[1]:
+						low_count = str(clow[0])
+				c_hours = c_hours + "<th>"+hour+":00</th>"
+				c_highs = c_highs + "<td>"+high_count+"</td>"
+				c_mediums = c_mediums + "<td>"+medium_count+"</td>"
+				c_lows = c_lows + "<td>"+low_count+"</td>"
+			r_all = ""
+			r_high = ""
+			r_medium = ""
+			r_low = ""
+			for rall in recent_alls:
+				if rall[0] >= 30:
+					priority = "high"
+					priority_label = "High"
+				if 10 < rall[0] < 30:
+					priority = "medium"
+					priority_label = "Medium"
+				if rall[0] <= 10:
+					priority = "low"
+					priority_label = "Low"
+					
+				r_all = r_all + "<tr><td><span class='ticket {!s}'>{!s}</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(priority, priority_label, rall[1], rall[2])
+			for rhigh in recent_highs:
+				r_high = r_high + "<tr><td><span class='ticket high'>High</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rhigh[0], rhigh[1])
+			for rmedium in recent_mediums:
+				r_medium = r_medium + "<tr><td><span class='ticket medium'>Medium</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rmedium[0], rmedium[1])
+			for rlow in recent_lows:
+				r_low = r_low + "<tr><td><span class='ticket low'>Low</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rlow[0], rlow[1])
+				
+			return template('webview', eventcount=events[0], highs=high_events[0], mediums=medium_events[0], lows=low_events[0], chart_hours=c_hours, chart_highs=c_highs, chart_mediums=c_mediums, chart_lows=c_lows, recent_all=r_all, recent_highs=r_high, recent_mediums=r_medium, recent_lows=r_low, topusers=top_users, topalerts=top_alerts, topkeywords=top_keywords)
 		else:
 			redirect('/login')
 	
 	#Routes for Login
 	@route('/login')
 	def login():
-		return template('login')	
+		action = request.query.action
+		if action == "logout":
+			my_notice = "Logged Out"
+			response.delete_cookie("loggedin")
+		elif action == "error":
+			my_notice = "Username or Password Incorrect"
+		else:
+			my_notice = ""
+		return template('login', notice=my_notice)	
 	
 	@post('/login-check')
 	def logincheck():
-		if request.forms.get('user') == 'smadmin' and request.forms.get('pass') == 'sm1234':
-                        response.set_cookie("loggedin", "Success", secret='sm2345-45634')
+		if request.forms.get('login_user') == 'admin' and request.forms.get('login_password') == 'sm1234':
+                        response.set_cookie("loggedin", request.forms.get('login_user'), secret='sm2345-45634')
                         redirect('/')
 		else:
+			redirect('/login?action=error')
+
+	#Route for Events
+	@route('/events')
+	def eventpage():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			rows = conn.cursor().execute("select modname, timeStamp, username, msg from spicymango order by timeStamp DESC LIMIT 3000").fetchall()
+			conn.close()
+			events = ""
+			for row in rows:
+				events = events + "<tr><td style=\'background-color: white;\'>"+row[0]+"</td><td>"+row[1]+"</td><td>"+row[2]+"</td><td>"+row[3]+"</td></tr>"
+			return template('events', event_rows=events)
+		else:
 			redirect('/login')
-
-	#Route for AJAX call for JSON Data
-	@route('/get_json')
-	def get_json():
-		import sqlite3, json
-		from math import ceil
-		database = check_config("OUTPUT_SQLITE3_DB_PATH=")
-		conn = sqlite3.connect(database)
-                c = conn.cursor()
-
-		ops = {'eq' : '=', 'cn' : 'LIKE'}
-		def getWhere(col, oper, val):
-			if oper == 'cn':
-				val = '%'+val+'%'
-			return "WHERE " + col + " " + ops[oper] + " '" + val + "' "	
-		
-		where = ""
-		if request.query.searchField:
-			where = getWhere(request.query.searchField, request.query.searchOper, request.query.searchString)
-		start = int(request.query.rows) * int(request.query.page) - int(request.query.rows)
-		
-		sqlcount = "select count(*) from spicymango " + where
-		c.execute(sqlcount)
-		count = c.fetchone()
-
-		sqlquery = "select timeStamp,modname,username,hostname,ircchan,msg from spicymango " + where + "order by " + request.query.sidx + " " + request.query.sord + " LIMIT " + request.query.rows + " OFFSET " + str(start) 
-		results = c.execute(sqlquery)
-
-		if count > 0:
-			total_pages = int(ceil(float(count[0]) / float(int(request.query.rows))))
-		else:
-			total_pages = 0		
-		
-		if int(request.query.page) > total_pages:
-			page = str(total_pages)
-		else:
-			page = str(request.query.page)
-
-		json_data = {}
-		json_data['page'] = page
-		json_data['total'] = str(total_pages)
-		json_data['records'] = str(count[0])
-		
-		cell_id = 1
-		json_data['rows'] = []
-		for row in results:
-			msg_row = row[5]
-		        r1 = r"(http://\S*(?=(]|\)|\b)))"
-        		msg_row = re.sub(r1,r'<a rel="nofollow" target="_blank" href="\1">\1</a>',msg_row)
-			json_data['rows'].append({'id' : str(cell_id), 'cell' : [row[0], row[1], row[2], row[3], row[4], msg_row]})
-			cell_id += 1
-	
-		response.set_header('Content-type', 'application/json')
-		return json.dumps(json_data, indent=4) 
-
-	#TEST JSON FILE
-	@route('/get_json_file')
-	def send_json_file():
-		return static_file('json.txt', root='web/')
 
 	#Route for png images
 	@route('/images/:filename#.*\.png#')
 	def send_image(filename):
     		return static_file(filename, root='web/images/', mimetype='image/png')
 
-	@route('/css/ui-darkness/images/:filename#.*\.png#')
-        def send_cssimage(filename):
-                return static_file(filename, root='web/css/ui-darkness/images/', mimetype='image/png')
-
+	#Route for jpg images
+	@route('/images/:filename#.*\.jpg#')
+	def send_image(filename):
+    		return static_file(filename, root='web/images/', mimetype='image/jpg')
+	
 	#Route for style sheets
 	@route('/css/:filename#.*\.css#')
         def send_image(filename):

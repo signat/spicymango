@@ -1,104 +1,192 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-    <title>SpicyMango v1.0 Beta</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>SpicyMango</title>
+	
+	<link rel="stylesheet" href="./css/screen.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="./css/plugin.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="./css/custom.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	
+	<style type="text/css" media="screen">
+		
+	</style>
 
-    <link rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css" />
-    <link rel="stylesheet" type="text/css" href="css/ui.jqgrid.css" />
-    <link rel="stylesheet" type="text/css" href="css/spicy.css" />
-    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
-    <script type="text/javascript" src="js/i18n/grid.locale-en.js"></script>
-    <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
-    <style type="text/css">
-	.ui-jqgrid tr.jqgrow td {
-   		white-space: normal !important;
-    		height:auto;
-    		vertical-align:text-top;
-    		padding-top: 5px;
-		padding-bottom: 5px;
-	}
-    </style>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-	    var refresher;
-	    $("#tabs").tabs({selected: 2});
-            $("#list").jqGrid({
-                url: 'get_json', //url: 'execute.jsp?command=command',
-                //mtype:'POST',
-                datatype:'json',
-		colNames : ['TimeStamp', 'Module', 'Username', 'Hostname', 'IRC Channel', 'Message'],
-                colModel : [
-		     {name:'timeStamp', index:'timeStamp'},
-                     {name:'modname', index:'modname'},
-                     {name:'username', index:'username'},
-                     {name:'hostname', index: 'hostname'},
-                     {name:'ircchan', index:'irchan'},
-		     {name:'msg', index:'msg', width: 600}
-                ],
-                //width: '1000',
-		shrinkToFit: false,
-                //height: '550',
-                pager: '#pager',
-		sortname: 'timeStamp',
-                sortorder: 'desc',
-		rowNum: 25,
-		rowList:[25,50,75,100],
-                viewrecords: true,
-		gridview: true,
-		hidegrid: false,
-		loadui: 'disable',
-                caption: ''
-            });
-	    jQuery("#list").jqGrid('navGrid','#pager',{search:true,edit:false,add:false,del:false},
-	    {},
-	    {},
-	    {},
-	    {sopt : ['eq', 'cn'], overlay : 0},
-	    {}
-	    );
-	    jQuery("#list").jqGrid('navButtonAdd', '#pager',{caption: "Columns", buttonicon: "ui-icon-newwin", title: "Choose Columns", onClickButton: function() {
-                jQuery("#list").jqGrid('columnChooser');
-            }});
-	   jQuery("#liveview").button({ icons: {primary: 'ui-icon-play'}});
-	   jQuery("#liveview").toggle(function () {
-		 $(this).button("option", "icons", {primary: 'ui-icon-pause'});
-		 $("#list").setGridParam({loadonce:true, rowNum:90000}).trigger('reloadGrid');
-		 clearInterval(refresher);
-		 },
-		 function() {
-		 $(this).button("option", "icons", {primary: 'ui-icon-play'});
-		 $("#list").setGridParam({loadonce:false, datatype: 'json', rowNum:25}).trigger('reloadGrid');
-		 refresher = setInterval(function(){jQuery("#list").trigger("reloadGrid");}, 5000);
-		 }
-	   ); 
-	   $(window).bind('resize', function() {
-		jQuery('#list').setGridWidth($('#tabs-1').width(), true);
-		jQuery('#list').setGridHeight($(window).height()-260, true);
-	   }).trigger('resize');
-	   refresher = setInterval(function(){jQuery("#list").trigger("reloadGrid");}, 10000);
-     });
-    </script>
 </head>
-<body style="font-size:62.5%; background: #000;">
-    <button id="liveview" style="display: inline; float: right;">LiveView</button>
-    <img src="images/smlogo.png"><span id="version">v1.0 Beta</span><br>
-    <span id="slogan">The Open Source Analysis Engine</span>
-    <br><br>
-    <div id="tabs">
-	    <ul>
-		<li><a href="#tabs-1">Events</a></li>
-		<li><a href="#tabs-2">Analysis</a></li>
-	    </ul>
-	    <div id="tabs-1">
-		<table id="list"><tr><td/></tr></table>
-		<div id="pager"></div>
-	    </div>
-	    <div id="tabs-2">
-		<p>Still in development</p>
-	    </div>
-    </div>
-</body>
-</html>
+
+<body>
+	
+%include header_nav
+
+	<div id="content" class="xfluid">
+		
+		<div class="portlet x3" style="min-height: 300px;">
+			
+			<div class="portlet-header">
+				<h4>Event Totals</h4>
+			</div> <!-- .portlet-header -->
+			
+			<div class="portlet-content">
+				<table cellspacing="0" class="info_table">
+					<tbody>
+						<tr>
+							<td class="value">{{eventcount}}</td>
+							<td class="full">Events</td>
+						</tr>
+						<tr>
+							<td class="value">{{highs}}</td>
+							<td class="full">High</td>
+						</tr>
+						<tr>
+							<td class="value">{{mediums}}</td>
+							<td class="full">Medium</td>
+						</tr>
+						<tr>
+							<td class="value">{{lows}}</td>
+							<td class="full">Low</td>
+						</tr>
+					</tbody>
+				</table>
+			</div> <!-- .portlet-content -->
+		</div> <!-- .portlet -->
+		
+		<div id="dash_chart" class="portlet x9">
+			
+			<div class="portlet-header">
+				<h4>Current Alert Trends</h4>
+			</div> <!-- .portlet-header -->
+			<div class="portlet-content">
+				<table class="stats" title="area" width="100%" cellpadding="0" cellspacing="0">
+					<caption>Last 12 Hours</caption>
+					<thead>
+						<tr>
+							<td>&nbsp;</td>
+							{{!chart_hours}}
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr>
+							<th>High</th>
+							{{!chart_highs}}
+						</tr>
+						
+						<tr>
+							<th>Medium</th>
+							{{!chart_mediums}}
+						</tr>
+						
+						<tr>
+							<th>Low</th>
+							{{!chart_lows}}
+						</tr>
+					</tbody>
+				</table>
+			</div> <!-- .portlet-content -->
+		</div> <!-- .portlet -->
+		
+		<div class="xbreak"></div> <!-- .xbreak -->
+		
+		<div class="portlet x6">
+			<div class="portlet-header">
+				<h4>Most Recent Alerts</h4>
+				
+				<ul class="portlet-tab-nav">
+					<li class="portlet-tab-nav-active"><a href="#allalerts">All</a></li>
+					<li class=""><a href="#highalerts">High</a></li>
+					<li class=""><a href="#medalerts">Medium</a></li>
+					<li class=""><a href="#lowalerts">Low</a></li>
+				</ul>
+			</div> <!-- .portlet-header -->
+			
+			<div class="portlet-content">
+				<div id="allalerts" class="portlet-tab-content">
+					<table class="support_table" cellspacing="0">
+						<tbody>
+						{{!recent_all}}
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+				<div id="highalerts" class="portlet-tab-content">
+					<table class="support_table" cellspacing="0">
+						<tbody>
+						{{!recent_highs}}
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+				<div id="medalerts" class="portlet-tab-content">
+					<table class="support_table" cellspacing="0">
+						<tbody>
+						{{!recent_mediums}}
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+				<div id="lowalerts" class="portlet-tab-content">
+					<table class="support_table" cellspacing="0">
+						<tbody>
+						{{!recent_lows}}
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+			</div> <!-- .portlet-content -->			
+		</div>  <!-- .portlet -->
+		
+		<div class="portlet x6">
+			<div class="portlet-header">
+				<h4>Top Indices</h4>
+				<ul class="portlet-tab-nav">
+					<li class="portlet-tab-nav-active"><a href="#topusers">Users</a></li>
+					<li class=""><a href="#topalerts">Alerts</a></li>
+					<li class=""><a href="#topkeywords">Keywords</a></li>
+				</ul>
+			</div> <!-- .portlet-header -->
+			<div class="portlet-content">
+				<div id="topusers" class="portlet-tab-content">
+					<table cellspacing="0" class="inbox_table">
+						<tbody>
+							<tr><td></td><td><b>Username</b></td><td><b># of Events</b></td></tr>
+							% for user in topusers:
+							<tr>
+								<td></td>
+								<td class="full"><a href="#">{{user[0]}}</a></td>
+								<td rel="tooltip" title="Number of alerts by this user.">{{user[1]}}</td>
+							</tr>
+							% end
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+				<div id="topalerts" class="portlet-tab-content">
+					<table cellspacing="0" class="inbox_table">
+						<tbody>
+							<tr><td></td><td><b>Alert</b></td><td><b>Weight</b></td></tr>
+							% for alert in topalerts:
+							<tr>
+								<td></td>
+								<td class="full"><a href="#">{{alert[0]}}</a></td>
+								<td rel="tooltip" title="Weighted value.">{{alert[1]}}</td>
+							</tr>
+							% end
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+				<div id="topkeywords" class="portlet-tab-content">
+					<table cellspacing="0" class="inbox_table">
+						<tbody>
+							<tr><td></td><td><b>Keyword</b></td><td><b>Count</b></td></tr>
+							% for keyword in topkeywords:
+							<tr>
+								<td></td>
+								<td class="full"><a href="#">{{keyword[0]}}</a></td>
+								<td rel="tooltip" title="Number of occurances.">{{keyword[1]}}</td>
+							</tr>
+							% end
+						</tbody>
+					</table>
+				</div> <!-- .portlet-tab-content -->
+			</div> <!-- .portlet-content -->			
+		</div> <!-- .portlet -->
+	</div> <!-- #content -->
+
+%include footer	

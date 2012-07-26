@@ -60,7 +60,8 @@ if check_config("OUTPUT_SQLITE3=") == 'ON':
 	if not os.path.isfile(path):
 		conn = sqlite3.connect(path)
 		c = conn.cursor()
-		c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT COLLATE NOCASE, hostname TEXT COLLATE NOCASE, ircchan TEXT, msg TEXT COLLATE NOCASE, timeStamp DATE, hash TEXT UNIQUE, id INTERGER PRIMARY KEY)')
+		c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT COLLATE NOCASE, hostname TEXT COLLATE NOCASE, ircchan TEXT, msg TEXT COLLATE NOCASE, timeStamp DATE, hash TEXT UNIQUE, id INTEGER PRIMARY KEY)')
+		c.execute('CREATE TABLE keywords (keyword TEXT, weight INTEGER)')
 		conn.commit()
 		c.close()
 
