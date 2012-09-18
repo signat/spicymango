@@ -29,6 +29,7 @@ from src.bottle import route, run, template, static_file, request, response, red
 from src.core import *
 import sqlite3, datetime
 from time import strftime
+import json
 
 #Read code to dynamically get name of this module.
 execfile('src/getname')
@@ -144,16 +145,73 @@ def main():
 	def eventpage():
 		username = request.get_cookie("loggedin", secret='sm2345-45634')
 		if username:
-			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
-			conn = sqlite3.connect(database)
-			rows = conn.cursor().execute("select modname, timeStamp, username, msg from spicymango order by timeStamp DESC LIMIT 3000").fetchall()
-			conn.close()
-			events = ""
-			for row in rows:
-				events = events + "<tr><td style=\'background-color: white;\'>"+row[0]+"</td><td>"+row[1]+"</td><td>"+row[2]+"</td><td>"+row[3]+"</td></tr>"
-			return template('events', event_rows=events)
+			return template('events')
 		else:
 			redirect('/login')
+	
+	#Route for AJAX Events
+	@route('/events.txt')
+	def eventpage():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			rows = conn.cursor().execute("select modname, timeStamp, username, msg from spicymango order by timeStamp DESC").fetchall()
+			conn.close()
+			
+			json_events = {}
+                	json_events['aaData'] = []
+                
+			for row in rows:
+				json_events['aaData'].append([row[0], row[1], row[2], row[3]])
+        
+			response.set_header('Content-type', 'application/json')
+			return json.dumps(json_events, indent=4)
+
+	#Route for Alerts
+	@route('/alerts')
+	def eventpage():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			alows = conn.cursor().execute("select count(id) from alerts where weight <= 10").fetchone() 
+			amediums = conn.cursor().execute("select count(id) from alerts where weight between 10 and 30").fetchone() 
+			ahighs = conn.cursor().execute("select count(id) from alerts where weight >= 30").fetchone() 
+			conn.close()
+			return template('alerts', total_alert_highs=ahighs[0], total_alert_mediums=amediums[0], total_alert_lows=alows[0])
+		else:
+			redirect('/login')
+
+	#Route for AJAX Alerts
+	@route('/alerts.txt')
+	def eventpage():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			rows = conn.cursor().execute("select a.weight, s.modname, s.timeStamp, s.username, s.msg from spicymango s join alerts a on s.id=a.id").fetchall()
+			conn.close()
+			
+			json_alerts = {}
+                        json_alerts['aaData'] = []
+
+                        for row in rows:
+				if row[0] <= 10:
+					priority = "Low"
+					tdclass = "low"
+				if 10 < row[0] < 30:
+					priority = "Medium"
+					tdclass = "medium"
+				if row[0] >= 30:
+					priority = "High"
+					tdclass = "high"
+				
+				total_weight = "<span class=\'ticket "+tdclass+"\'>"+priority+"</span>"
+                                json_alerts['aaData'].append([total_weight, row[0], row[1], row[2], row[3], row[4]])
+
+                        response.set_header('Content-type', 'application/json')
+                        return json.dumps(json_alerts, indent=4)
 
 	#Route for png images
 	@route('/images/:filename#.*\.png#')

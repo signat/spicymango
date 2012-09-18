@@ -27,10 +27,12 @@ body { background: #263849; font: 12px/1.7em arial, sans-serif; }
 	text-align: left;
 	width: 100%; 
 	overflow: hidden; 
+	border-radius: 6px;
 	-moz-border-radius: 6px; 
 	-webkit-border-radius: 6px;	
 	-moz-box-shadow: 1px 1px 10px rgba(0,0,0,.25);
 	-webkit-box-shadow: 1px 1px 10px  rgba(0,0,0,.25);
+	box-shadow: 1px 1px 10px  rgba(0,0,0,.25);
 }
 
 

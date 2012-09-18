@@ -61,7 +61,7 @@ class Output(object):
                 	outputfile.write(outString + "\n")
                 	outputfile.close()
 		def to_Sqlite3():
-			import sqlite3, hashlib
+			import sqlite3, hashlib, re
 			
 			# Generate hash to insert into the DB so only unique records get added.
 			hash = hashlib.md5()
@@ -74,14 +74,30 @@ class Output(object):
 			path = check_config("OUTPUT_SQLITE3_DB_PATH=")
 			conn = sqlite3.connect(path)
 			c = conn.cursor()
-			sql = "INSERT OR REPLACE INTO spicymango VALUES (?, ?, ?, ?, ?, ?, ?, NULL)"
+			sql = "INSERT INTO spicymango VALUES (?, ?, ?, ?, ?, ?, ?, NULL)"
 			try:
-				c.execute(sql, (rmNonprint(self.modname), rmNonprint(self.username), rmNonprint(self.hostname), rmNonprint(self.ircchan), rmNonprint(self.msg), datetime.datetime.now(), hash.hexdigest()))
+				original = c.execute('SELECT COUNT(hash) FROM spicymango WHERE hash = ?', ([hash.hexdigest()])).fetchone()
+				if original[0] is 0:
+					c.execute(sql, (rmNonprint(self.modname), rmNonprint(self.username), rmNonprint(self.hostname), rmNonprint(self.ircchan), rmNonprint(self.msg), datetime.datetime.now(), hash.hexdigest()))
+					event_id = c.execute('SELECT last_insert_rowid()').fetchone() 
+					#Analysis
+					keywords = c.execute('select * from keywords').fetchall()
+					total_weight = 0
+					#Iterate through keywords per event
+					for keyword in keywords:
+						#find a match
+						key_counter = 0
+						if re.search(keyword[0], rmNonprint(self.msg), re.IGNORECASE):
+							key_counter += 1
+							c.execute('UPDATE keywords SET count = (count + ?) WHERE keyword = ?', (key_counter, keyword[0]))
+							total_weight += keyword[1]
+					if total_weight > 0:
+						c.execute('INSERT INTO alerts VALUES(?, ?)', (event_id[0], total_weight))
 			except sqlite3.OperationalError:
 				print_error(module, "Database Locked...skipping record.")
 			
 			conn.commit()
-			c.close()
+			conn.close()
 			                
 		#Check config and send output where enabled, but first make sure required attributes are set.
 		if self.modname is None:

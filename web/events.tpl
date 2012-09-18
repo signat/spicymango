@@ -24,25 +24,44 @@
 			
 			<div class="portlet-content">
 				
-				<table cellpadding="0" cellspacing="0" border="0" class="display" rel="datatable" id="events_table">
+				<table cellpadding="0" cellspacing="0" border="0" class="display" rel="datatabl" id="events_table">
 					<thead>
 						<tr>
 							<th>Module</th>
 							<th>Date</th>
 							<th>Username</th>
-							<th>Message</th>
+							<th style="width: 48%;">Message</th>
 						</tr>
 					</thead>
 					<tbody>
-						{{!event_rows}}
 					</tbody>
 				</table>
 				
 			</div>
 		</div>
 		
-
-		
 	</div> <!-- #content -->
 
-%include footer	
+%include footer
+
+<script  type="text/javascript" src="js/jquery/jquery.1.4.2.min.js"></script>
+<script  type="text/javascript" src="js/slate/slate.js"></script>
+<script  type="text/javascript" src="js/slate/slate.portlet.js"></script>
+<script  type="text/javascript" src="js/plugin.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+$(function () 
+{
+	slate.init ();
+	slate.portlet.init ();
+	$('#events_table').dataTable({
+		"bProcessing": true,
+        	"sAjaxSource": "events.txt",
+        	"bDeferRender": true,
+		"aaSorting": [[ 1, "desc" ]]
+    	});  
+});
+</script>
+
+</body>
+</html>

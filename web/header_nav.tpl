@@ -30,11 +30,21 @@
 				</li>
 		
 				<li class="mega">
-					<a href="/events" class="mega-link">Alerts</a>	
+					<a href="/alerts" class="mega-link">Alerts</a>	
 				</li>
 
 				<li class="mega">
 					<a href="/events" class="mega-link">Raw Events</a>	
+				</li>
+
+				<li class="mega mega-current">				
+					<a href="javascript:;" class="mega-tab"><font style="color: orange;">Settings</font></a>
+					<div class="mega-content mega-menu ">
+						<ul>
+							<li><a href="sample_gallery.html">Change Password</a></li>
+							<li><a href="sample_reports.html">Keywords</a></li>			
+						</ul>
+					</div>						
 				</li>
 				
 			</ul>
