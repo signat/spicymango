@@ -59,12 +59,12 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<th><input type="text" name="search_engine" value="Search Level" class="search_init" /></th>
-							<th><input type="text" name="search_browser" value="Search Weight" class="search_init" /></th>
-							<th><input type="text" name="search_platform" value="Search Module" class="search_init" /></th>
-							<th><input type="text" name="search_version" value="Search Date" class="search_init" /></th>
-							<th><input type="text" name="search_grade" value="Search Username" class="search_init" /></th>
-							<th><input type="text" name="search_grade" value="Search Message" class="search_init" /></th>
+							<th><input type="text" name="search_level" value="Search Level" class="search_init" /></th>
+							<th><input type="text" name="search_weight" value="Search Weight" class="search_init" /></th>
+							<th><input type="text" name="search_module" value="Search Module" class="search_init" /></th>
+							<th><input type="text" name="search_date" value="Search Date" class="search_init" /></th>
+							<th><input type="text" name="search_username" value="Search Username" class="search_init" /></th>
+							<th><input type="text" name="search_message" value="Search Message" class="search_init" /></th>
 						</tr>
 					</tfoot>
 				</table>

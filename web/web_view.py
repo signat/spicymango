@@ -212,8 +212,58 @@ def main():
 
                         response.set_header('Content-type', 'application/json')
                         return json.dumps(json_alerts, indent=4)
+	
+    #Route for Keywords 
+	@route('/set-keywords')
+	def setkeywordspage():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			return template('set-keywords')
+		else:
+			redirect('/login')
 
-	#Route for png images
+	#Route for AJAX Keywords
+	@route('/keywords.txt')
+	def keywordspage():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			rows = conn.cursor().execute("select id, keyword, weight from keywords order by weight DESC").fetchall()
+			conn.close()
+			
+			json_keywords = {}
+                	json_keywords['aaData'] = []
+                
+			for row in rows:
+				json_keywords['aaData'].append([row[0], row[1], row[2]])
+        
+			response.set_header('Content-type', 'application/json')
+			return json.dumps(json_keywords, indent=4)
+
+	#Route for Keyword Updates
+	@post('/keyupdate')
+	def updatekey():
+            username = request.get_cookie("loggedin", secret='sm2345-45634')
+            if username:
+                rid = request.forms.get('id')
+                rvalue = request.forms.get('value')
+                rcolumn = request.forms.get('columnName')
+                database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+                conn = sqlite3.connect(database)
+                if rcolumn == "keyword":
+                    conn.cursor().execute('UPDATE keywords SET keyword = ?, count = 0 WHERE id = ?', (rvalue, rid))
+                    conn.commit()
+                    conn.close()
+                elif rcolumn == "weight":    
+                    conn.cursor().execute('UPDATE keywords SET weight = ? WHERE id = ?', (rvalue, rid))
+                    conn.commit()
+                    conn.close()
+                else:
+                    print "Nope"
+                return rvalue
+	
+    #Route for png images
 	@route('/images/:filename#.*\.png#')
 	def send_image(filename):
     		return static_file(filename, root='web/images/', mimetype='image/png')

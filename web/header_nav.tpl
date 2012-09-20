@@ -42,7 +42,7 @@
 					<div class="mega-content mega-menu ">
 						<ul>
 							<li><a href="sample_gallery.html">Change Password</a></li>
-							<li><a href="sample_reports.html">Keywords</a></li>			
+							<li><a href="/set-keywords">Keywords</a></li>			
 						</ul>
 					</div>						
 				</li>
