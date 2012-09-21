@@ -210,8 +210,8 @@ def main():
 				total_weight = "<span class=\'ticket "+tdclass+"\'>"+priority+"</span>"
 				json_alerts['aaData'].append([total_weight, row[0], row[1], row[2], row[3], row[4]])
 
-				response.set_header('Content-type', 'application/json')
-				return json.dumps(json_alerts, indent=4)
+			response.set_header('Content-type', 'application/json')
+			return json.dumps(json_alerts, indent=4)
 	
 	#Route for Keywords
 	@route('/set-keywords')
@@ -274,16 +274,14 @@ def main():
 	def deletekey():
 			username = request.get_cookie("loggedin", secret='sm2345-45634')
 			if username:
-				rkeyword = request.forms.get('keyword')
-				rweight = request.forms.get('weight')
+				rid = request.forms.get('id')
 				database = check_config("OUTPUT_SQLITE3_DB_PATH=")
 				conn = sqlite3.connect(database)
-				conn.cursor().execute('INSERT INTO keywords VALUES(NULL,?,?,0)', (rkeyword, rweight))
-				rid = conn.cursor().execute('SELECT last_insert_rowid()').fetchone()
+				conn.cursor().execute('DELETE from keywords WHERE id = ?', (rid))
 				conn.commit()
 				conn.close()
 
-				return '%s' % (rid[0])
+				return 'ok'
 	
 	#Route for png images
 	@route('/images/:filename#.*\.png#')
