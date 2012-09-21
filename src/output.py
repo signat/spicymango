@@ -87,10 +87,10 @@ class Output(object):
 					for keyword in keywords:
 						#find a match
 						key_counter = 0
-						if re.search(keyword[0], rmNonprint(self.msg), re.IGNORECASE):
+						if re.search(keyword[1], rmNonprint(self.msg), re.IGNORECASE):
 							key_counter += 1
-							c.execute('UPDATE keywords SET count = (count + ?) WHERE keyword = ?', (key_counter, keyword[0]))
-							total_weight += keyword[1]
+							c.execute('UPDATE keywords SET count = (count + ?) WHERE keyword = ?', (key_counter, keyword[1]))
+							total_weight += keyword[2]
 					if total_weight > 0:
 						c.execute('INSERT INTO alerts VALUES(?, ?)', (event_id[0], total_weight))
 			except sqlite3.OperationalError:
