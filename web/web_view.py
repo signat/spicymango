@@ -1,21 +1,21 @@
 #########################################################################
 # Filename: web_view.py
 # Description: Invokes a stand-alone webserver to create an interactive
-#	       GUI to SpicyMango.
+#		   GUI to SpicyMango.
 # Copyright (C) 2011-2012 Chris Centore
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or any later 
-#    version.
+#	This program is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU Affero General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or any later 
+#	version.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
+#	This program is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU Affero General Public License for more details.
 #
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program. If not, see <http://www.gnu.org/licenses/>.
+#	You should have received a copy of the GNU Affero General Public License
+#	along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # SpicyMango written by: Chris Centore, Steve Swann, Jason Gunnoe
 # Website: http://code.google.com/p/spicymango/
@@ -45,8 +45,8 @@ def main():
 		username = request.get_cookie("loggedin", secret='sm2345-45634')
 		if username:
 			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
-                	conn = sqlite3.connect(database)
-                	events = conn.cursor().execute('select count(id) from spicymango').fetchone()
+			conn = sqlite3.connect(database)
+			events = conn.cursor().execute('select count(id) from spicymango').fetchone()
 			high_events = conn.cursor().execute('select count(id) from alerts where weight >= 30').fetchone()
 			medium_events = conn.cursor().execute('select count(id) from alerts where weight between 10 and 30').fetchone()
 			low_events = conn.cursor().execute('select count(id) from alerts where weight <= 10').fetchone()
@@ -135,8 +135,8 @@ def main():
 	@post('/login-check')
 	def logincheck():
 		if request.forms.get('login_user') == 'admin' and request.forms.get('login_password') == 'sm1234':
-                        response.set_cookie("loggedin", request.forms.get('login_user'), secret='sm2345-45634')
-                        redirect('/')
+						response.set_cookie("loggedin", request.forms.get('login_user'), secret='sm2345-45634')
+						redirect('/')
 		else:
 			redirect('/login?action=error')
 
@@ -160,11 +160,11 @@ def main():
 			conn.close()
 			
 			json_events = {}
-                	json_events['aaData'] = []
-                
+			json_events['aaData'] = []
+			
 			for row in rows:
 				json_events['aaData'].append([row[0], row[1], row[2], row[3]])
-        
+		
 			response.set_header('Content-type', 'application/json')
 			return json.dumps(json_events, indent=4)
 
@@ -194,9 +194,9 @@ def main():
 			conn.close()
 			
 			json_alerts = {}
-                        json_alerts['aaData'] = []
+			json_alerts['aaData'] = []
 
-                        for row in rows:
+			for row in rows:
 				if row[0] <= 10:
 					priority = "Low"
 					tdclass = "low"
@@ -208,22 +208,13 @@ def main():
 					tdclass = "high"
 				
 				total_weight = "<span class=\'ticket "+tdclass+"\'>"+priority+"</span>"
-                                json_alerts['aaData'].append([total_weight, row[0], row[1], row[2], row[3], row[4]])
+				json_alerts['aaData'].append([total_weight, row[0], row[1], row[2], row[3], row[4]])
 
-                        response.set_header('Content-type', 'application/json')
-                        return json.dumps(json_alerts, indent=4)
+				response.set_header('Content-type', 'application/json')
+				return json.dumps(json_alerts, indent=4)
 	
-    #Route for Keywords 
+	#Route for Keywords
 	@route('/set-keywords')
-	def setkeywordspage():
-		username = request.get_cookie("loggedin", secret='sm2345-45634')
-		if username:
-			return template('set-keywords')
-		else:
-			redirect('/login')
-
-	#Route for AJAX Keywords
-	@route('/keywords.txt')
 	def keywordspage():
 		username = request.get_cookie("loggedin", secret='sm2345-45634')
 		if username:
@@ -231,62 +222,93 @@ def main():
 			conn = sqlite3.connect(database)
 			rows = conn.cursor().execute("select id, keyword, weight from keywords order by weight DESC").fetchall()
 			conn.close()
-			
-			json_keywords = {}
-                	json_keywords['aaData'] = []
-                
+			trRows = ""
+	
 			for row in rows:
-				json_keywords['aaData'].append([row[0], row[1], row[2]])
-        
-			response.set_header('Content-type', 'application/json')
-			return json.dumps(json_keywords, indent=4)
+				trRows = trRows + '<tr id=\'%s\'><td>%s</td><td>%s</td></tr>' % (row[0],row[1],row[2])
+
+			return template('set-keywords', dataRows=trRows)
+		else:
+			redirect('/login')
 
 	#Route for Keyword Updates
 	@post('/keyupdate')
 	def updatekey():
-            username = request.get_cookie("loggedin", secret='sm2345-45634')
-            if username:
-                rid = request.forms.get('id')
-                rvalue = request.forms.get('value')
-                rcolumn = request.forms.get('columnName')
-                database = check_config("OUTPUT_SQLITE3_DB_PATH=")
-                conn = sqlite3.connect(database)
-                if rcolumn == "keyword":
-                    conn.cursor().execute('UPDATE keywords SET keyword = ?, count = 0 WHERE id = ?', (rvalue, rid))
-                    conn.commit()
-                    conn.close()
-                elif rcolumn == "weight":    
-                    conn.cursor().execute('UPDATE keywords SET weight = ? WHERE id = ?', (rvalue, rid))
-                    conn.commit()
-                    conn.close()
-                else:
-                    print "Nope"
-                return rvalue
+			username = request.get_cookie("loggedin", secret='sm2345-45634')
+			if username:
+				rid = request.forms.get('id')
+				rvalue = request.forms.get('value')
+				rcolumn = request.forms.get('columnName')
+				database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+				conn = sqlite3.connect(database)
+				if rcolumn == "keyword":
+					conn.cursor().execute('UPDATE keywords SET keyword = ?, count = 0 WHERE id = ?', (rvalue, rid))
+					conn.commit()
+					conn.close()
+				elif rcolumn == "weight":	
+					conn.cursor().execute('UPDATE keywords SET weight = ? WHERE id = ?', (rvalue, rid))
+					conn.commit()
+					conn.close()
+				else:
+					return "Error"
+				return rvalue
 	
-    #Route for png images
+	#Route for Keyword Add
+	@post('/keyadd')
+	def addkey():
+			username = request.get_cookie("loggedin", secret='sm2345-45634')
+			if username:
+				rkeyword = request.forms.get('keyword')
+				rweight = request.forms.get('weight')
+				database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+				conn = sqlite3.connect(database)
+				conn.cursor().execute('INSERT INTO keywords VALUES(NULL,?,?,0)', (rkeyword, rweight))
+				rid = conn.cursor().execute('SELECT last_insert_rowid()').fetchone()
+				conn.commit()
+				conn.close()
+
+				return str(rid[0])
+	
+	#Route for Keyword Delete
+	@post('/keydelete')
+	def deletekey():
+			username = request.get_cookie("loggedin", secret='sm2345-45634')
+			if username:
+				rkeyword = request.forms.get('keyword')
+				rweight = request.forms.get('weight')
+				database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+				conn = sqlite3.connect(database)
+				conn.cursor().execute('INSERT INTO keywords VALUES(NULL,?,?,0)', (rkeyword, rweight))
+				rid = conn.cursor().execute('SELECT last_insert_rowid()').fetchone()
+				conn.commit()
+				conn.close()
+
+				return '%s' % (rid[0])
+	
+	#Route for png images
 	@route('/images/:filename#.*\.png#')
 	def send_image(filename):
-    		return static_file(filename, root='web/images/', mimetype='image/png')
+		return static_file(filename, root='web/images/', mimetype='image/png')
 
 	#Route for jpg images
 	@route('/images/:filename#.*\.jpg#')
 	def send_image(filename):
-    		return static_file(filename, root='web/images/', mimetype='image/jpg')
+		return static_file(filename, root='web/images/', mimetype='image/jpg')
 	
 	#Route for style sheets
 	@route('/css/:filename#.*\.css#')
-        def send_image(filename):
-                return static_file(filename, root='web/css/')
+	def send_image(filename):
+		return static_file(filename, root='web/css/')
 
 	#Route for javascript
 	@route('/js/:filename#.*\.js#')
-        def send_image(filename):
-                return static_file(filename, root='web/js/')
+	def send_image(filename):
+		return static_file(filename, root='web/js/')
 
 	#Route for HTML
 	@route('/:filename#.*\.html#')
-        def send_image(filename):
-                return static_file(filename, root='web/')
+	def send_image(filename):
+		return static_file(filename, root='web/')
 
 
 	# Run Web View webserver on specified ip and port

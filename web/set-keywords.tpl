@@ -37,23 +37,22 @@
                 <table cellpadding="0" cellspacing="0" border="0" class="display" id="keyword_table">
 					<thead>
 						<tr>
-							<th>id</th>
 							<th>keyword</th>
 							<th>weight</th>
 						</tr>
 					</thead>
 					<tbody>
+                        {{!dataRows}}
 					</tbody>
 				</table>
                 
                 <!-- Custom form for adding new records -->
                 <form id="formAddNewRow" action="#" title="Add new keyword">
                     <label for="keyword">Keyword</label><br />
-                    <input type="text" name="keyword" id="keyword" class="required" rel="1" />
+                    <input type="text" name="keyword" id="keyword" class="required" rel="0" />
                     <br />
                     <label for="weight">Weight</label><br />
-                    <input type="text" name="weight" id="weight" class="required" rel="2" />
-                    <input type="hidden" name="id" id="id" rel="0" />
+                    <input type="text" name="weight" id="weight" class="required" rel="1" />
                     <br />
                 </form>
 
@@ -67,7 +66,7 @@
 <script  type="text/javascript" src="js/jquery/jquery.1.4.2.min.js"></script>
 <script  type="text/javascript" src="js/slate/slate.js"></script>
 <script  type="text/javascript" src="js/slate/slate.portlet.js"></script>
-<script  type="text/javascript" src="js/jquery.dataTables.js"></script>
+<script  type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 <script  type="text/javascript" src="js/jquery.dataTables.editable.js"></script>
 <script  type="text/javascript" src="js/jquery.jeditable.js"></script>
 <script  type="text/javascript" src="js/jquery-ui.js"></script>
@@ -78,26 +77,18 @@ $(function ()
 {
 	//slate.init ();
 	//slate.portlet.init ();
-	$('#keyword_table').dataTable({
-		"bProcessing": true,
-        	"sAjaxSource": "keywords.txt",
-        	"bDeferRender": true,
+	var oTable = $('#keyword_table').dataTable({
 		"aaSorting": [[ 1, "desc" ]],
         "oLanguage": {
                         "oPaginate": {
                                         "sNext": "",
                                         "sPrevious": ""
                                      }
-                     },
-        "aoColumns": [
-                        /* id */ { "bSearchable": false,
-                                   "bVisible": false },
-                        /* keyword */ null,
-                        /* weight */ null
-                     ]
+                     }
     	}).makeEditable({
                      sUpdateURL: "keyupdate",
-                     sAddURL: "keyadd"
+                     sAddURL: "keyadd",
+					 sDeleteURL: "keydelete"
             });
 });
 </script>
