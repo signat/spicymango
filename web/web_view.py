@@ -282,7 +282,36 @@ def main():
 				conn.close()
 
 				return 'ok'
-	
+
+	#Route for ReAnalyze
+	@route('/reAnalyze')
+	def analyze():
+		#Analysis
+		database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+		conn = sqlite3.connect(database)
+		conn.cursor().execute('DELETE from alerts')
+		conn.cursor().execute('UPDATE keywords SET count = 0')
+
+		events = conn.cursor().execute('SELECT msg,id from spicymango').fetchall()
+		keywords = conn.cursor().execute('SELECT * from keywords').fetchall()
+		
+		#Iterate through Events
+		for event in events:
+			total_weight = 0
+			#Iterate through keywords per event
+			for keyword in keywords:
+				#find a match
+				key_counter = 0
+				if re.search(keyword[1], event[0], re.IGNORECASE):
+					key_counter += 1
+					conn.cursor().execute('UPDATE keywords SET count = (count + ?) WHERE keyword = ?', (key_counter, keyword[1]))
+					total_weight += keyword[2]
+			if total_weight > 0:
+				conn.cursor().execute('INSERT INTO alerts VALUES(?, ?)', (event[1], total_weight))
+		conn.commit()
+		conn.close()
+		return '1'
+
 	#Route for png images
 	@route('/images/:filename#.*\.png#')
 	def send_image(filename):

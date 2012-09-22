@@ -32,6 +32,7 @@
                 <div>
                 <button id="btnAddNewRow" class="btn btn-small">Add</button>
                 <button id="btnDeleteRow" class="delete_row btn btn-small">Delete</button>
+				<button id="btnAnalyze" type="button" class="btn btn-small btn-orange">Re-Analyze Data</button><span id="dataLoading" style="display: none; float: right;"><h3>Analyzing...</h3></span>
 				</div>
                 <br />
                 <table cellpadding="0" cellspacing="0" border="0" class="display" id="keyword_table">
@@ -47,18 +48,35 @@
 				</table>
                 
                 <!-- Custom form for adding new records -->
-                <form id="formAddNewRow" action="#" title="Add new keyword">
+                <form id="formAddNewRow" action="#" title="New Keyword">
                     <label for="keyword">Keyword</label><br />
                     <input type="text" name="keyword" id="keyword" class="required" rel="0" />
                     <br />
                     <label for="weight">Weight</label><br />
-                    <input type="text" name="weight" id="weight" class="required" rel="1" />
+                    <input type="text" name="weight" id="weight" class="required digits" rel="1" />
                     <br />
                 </form>
 
 			</div>
-		</div>
-		
+		</div><!-- #portlet -->
+		<div class="portlet x3">
+			<div class="portlet-header"><h4>Thresholds</h4></div>
+			<div class="portlet-content">
+				<div id="slider"></div>
+				<br />
+				<form>
+					<label for="lowrange">Low Range:</label>
+					<input id="lowrange" type="text" style="border: 0px; font-weight: bold; color: grey;"/>
+					<br />
+					<label for="medrange">Medium Range:</label>
+					<input id="medrange" type="text" style="border: 0px; font-weight: bold; color: orange;"/>
+					<br />
+					<label for="highrange">High Range:</label>
+					<input id="highrange" type="text" style="border: 0px; font-weight: bold; color: red;"/>
+					<button id="btnThreshold" type="button" class="btn btn-small btn-grey" style="float: right;" disabled="disabled">Save</button>
+				</form>
+			</div>
+		</div> <!-- #portlet -->
 	</div> <!-- #content -->
 
 %include footer
@@ -85,12 +103,71 @@ $(function ()
                                         "sPrevious": ""
                                      }
                      }
-    	}).makeEditable({
+	}).makeEditable({
                      sUpdateURL: "keyupdate",
                      sAddURL: "keyadd",
-					 sDeleteURL: "keydelete"
-            });
+					 sDeleteURL: "keydelete",
+					 "aoColumns": [
+					                {
+									cssclass:"required"
+									},
+									{
+									cssclass:"required digits"
+									}
+						],
+	});
+
+	$('#btnAnalyze').click(function (){
+			$(this).addClass( "btn-grey" ); 
+			$(this).removeClass( "btn-orange" );
+			$('#dataLoading').css({ 'display' : 'block', 'text-decoration' : 'blink' });
+			$(this).attr("disabled", "disabled");
+			$.ajax({
+				url: "reAnalyze",
+								  
+				type: "GET",
+
+				//Do not cache the page
+				cache: false,
+
+				//success
+				success: function (html) {     
+					if (html==1) {
+						$('#btnAnalyze').addClass( "btn-orange" ); 
+						$('#btnAnalyze').removeClass( "btn-grey" );
+						$('#dataLoading').css({ 'display' : 'none', 'text-decoration' : 'none' });
+						$('#btnAnalyze').removeAttr("disabled");
+					} else 
+						alert('Sorry, unexpected error.');
+					}
+			});
+
+	});
+	$('#slider').slider({
+		range: true,
+		min: 1,
+		max: 100,
+		values: [ 30,60 ],
+		slide: function( event, ui ) {
+			$( "#lowrange" ).val( "1 - " + ui.values[ 0 ] );
+			$( "#medrange" ).val( (ui.values[ 0 ] + 1) + " - " + (ui.values[ 1 ] - 1) );
+			$( "#highrange" ).val( ui.values[ 1 ] + " - 100" );
+			$('#btnThreshold').addClass( "btn-navy" ); 
+			$('#btnThreshold').removeClass( "btn-grey" );
+			$('#btnThreshold').removeAttr("disabled");
+									 }
+	});
+	$( "#lowrange" ).val( "1 - " + $( "#slider" ).slider( "values", 0 ) );
+	$( "#medrange" ).val( ($( "#slider" ).slider( "values", 0 ) + 1) + " - " + ( $( "#slider" ).slider( "values", 1 ) - 1) );
+	$( "#highrange" ).val( $( "#slider" ).slider( "values", 1 ) + " - 100" );
+	$('#btnThreshold').click(function (){
+			$(this).addClass( "btn-grey" ); 
+			$(this).removeClass( "btn-navy" );
+			alert('Saved');
+			$(this).attr("disabled", "disabled");
+	});
 });
+
 </script>
 
 </body>

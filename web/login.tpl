@@ -41,11 +41,9 @@
 
 					
 					<div class=""><span class="input"><input name="login_password" id="login_password" class="text" type="password" /> 
-						<a style="" href="javascript:;" id="forgot_my_password">Forgot password?</a></span></div>
 				</div> <!-- .field -->
 				
 				<div class="checkbox">
-					<span class="label">&nbsp;</span>
 					
 					<div class=""><input name="remember" id="remember" class="checkbox" value="yes" type="checkbox" /> &nbsp;&nbsp;<label style="display: inline;" for="remember">Remember me on this computer</label></div>
 				</div> <!-- .field -->
@@ -63,9 +61,9 @@
 
 		
 	</form>
-
-		<div style="color: red; margin-left: 20px;">{{notice}}</div>
 </div>
+
+		<div id="notice" style="color: red; margin-left: 20px;">{{notice}}</div>
 
 </div> <!-- #login -->
 

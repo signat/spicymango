@@ -33,13 +33,11 @@ body { background: #263849; font: 12px/1.7em arial, sans-serif; }
 	-moz-box-shadow: 1px 1px 10px rgba(0,0,0,.25);
 	-webkit-box-shadow: 1px 1px 10px  rgba(0,0,0,.25);
 	box-shadow: 1px 1px 10px  rgba(0,0,0,.25);
+	height: 240px;
 }
 
 
 #login-body form { padding: 0 0 50px; position: relative; }
-
-#login-body input#login_password { width: 170px; position: absolute; top: 5px; left: 5px; }
-
 
 #login-body input.text 
 {
