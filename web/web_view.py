@@ -46,17 +46,22 @@ def main():
 		if username:
 			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
 			conn = sqlite3.connect(database)
+			#Get Thresholds
+			lmax = conn.cursor().execute("SELECT max from thresholds WHERE tname = 'low'").fetchone()
+			med = conn.cursor().execute("SELECT min,max from thresholds WHERE tname = 'med'").fetchone()
+			hmin = conn.cursor().execute("SELECT min from thresholds WHERE tname = 'high'").fetchone()
+
 			events = conn.cursor().execute('select count(id) from spicymango').fetchone()
-			high_events = conn.cursor().execute('select count(id) from alerts where weight >= 30').fetchone()
-			medium_events = conn.cursor().execute('select count(id) from alerts where weight between 10 and 30').fetchone()
-			low_events = conn.cursor().execute('select count(id) from alerts where weight <= 10').fetchone()
-			chart_highs = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight > 30 and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)").fetchall()
-			chart_mediums = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight between 10 and 30 and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)").fetchall()
-			chart_lows = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight < 10 and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)").fetchall()
+			high_events = conn.cursor().execute('select count(id) from alerts where weight >= ?', (hmin[0],)).fetchone()
+			medium_events = conn.cursor().execute('select count(id) from alerts where weight between ? and ?', (med[0],med[1])).fetchone()
+			low_events = conn.cursor().execute('select count(id) from alerts where weight <= ?', (lmax[0],)).fetchone()
+			chart_highs = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight >= ? and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)", (hmin[0],)).fetchall()
+			chart_mediums = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight between ? and ? and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)", (med[0],med[1])).fetchall()
+			chart_lows = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight <= ? and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)", (lmax[0],)).fetchall()
 			recent_alls = conn.cursor().execute("select a.weight, s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id order by timeStamp DESC limit 7").fetchall()
-			recent_highs = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight >= 30 order by timeStamp DESC limit 7").fetchall()
-			recent_mediums = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight between 10 and 30 order by timeStamp DESC limit 7").fetchall()
-			recent_lows = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight <= 10 order by timeStamp DESC limit 7").fetchall()
+			recent_highs = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight >= ? order by timeStamp DESC limit 7", (hmin[0],)).fetchall()
+			recent_mediums = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight between ? and ? order by timeStamp DESC limit 7", (med[0],med[1])).fetchall()
+			recent_lows = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight <= ? order by timeStamp DESC limit 7", (lmax[0],)).fetchall()
 			top_users = conn.cursor().execute("select s.username, count(s.username) from spicymango s join alerts a on s.id = a.id group by username order by count(username) DESC LIMIT 5").fetchall()
 			top_alerts = conn.cursor().execute("select s.msg, a.weight from spicymango s join alerts a on s.id = a.id order by a.weight DESC LIMIT 5").fetchall()
 			top_keywords = conn.cursor().execute("select keyword, count from keywords order by count DESC LIMIT 5").fetchall()
@@ -97,13 +102,13 @@ def main():
 			r_medium = ""
 			r_low = ""
 			for rall in recent_alls:
-				if rall[0] >= 30:
+				if rall[0] >= hmin[0]:
 					priority = "high"
 					priority_label = "High"
-				if 10 < rall[0] < 30:
+				if med[0] < rall[0] < med[1]:
 					priority = "medium"
 					priority_label = "Medium"
-				if rall[0] <= 10:
+				if rall[0] <= lmax[0]:
 					priority = "low"
 					priority_label = "Low"
 					
@@ -175,9 +180,14 @@ def main():
 		if username:
 			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
 			conn = sqlite3.connect(database)
-			alows = conn.cursor().execute("select count(id) from alerts where weight <= 10").fetchone() 
-			amediums = conn.cursor().execute("select count(id) from alerts where weight between 10 and 30").fetchone() 
-			ahighs = conn.cursor().execute("select count(id) from alerts where weight >= 30").fetchone() 
+			#Get Thresholds
+			lmax = conn.cursor().execute("SELECT max from thresholds WHERE tname = 'low'").fetchone()
+			med = conn.cursor().execute("SELECT min,max from thresholds WHERE tname = 'med'").fetchone()
+			hmin = conn.cursor().execute("SELECT min from thresholds WHERE tname = 'high'").fetchone()
+
+			alows = conn.cursor().execute("select count(id) from alerts where weight <= ?", (lmax[0],)).fetchone() 
+			amediums = conn.cursor().execute("select count(id) from alerts where weight between ? and ?", (med[0],med[1])).fetchone() 
+			ahighs = conn.cursor().execute("select count(id) from alerts where weight >= ?", (hmin[0],)).fetchone() 
 			conn.close()
 			return template('alerts', total_alert_highs=ahighs[0], total_alert_mediums=amediums[0], total_alert_lows=alows[0])
 		else:
@@ -190,6 +200,11 @@ def main():
 		if username:
 			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
 			conn = sqlite3.connect(database)
+			#Get Thresholds
+			lmax = conn.cursor().execute("SELECT max from thresholds WHERE tname = 'low'").fetchone()
+			med = conn.cursor().execute("SELECT min,max from thresholds WHERE tname = 'med'").fetchone()
+			hmin = conn.cursor().execute("SELECT min from thresholds WHERE tname = 'high'").fetchone()
+
 			rows = conn.cursor().execute("select a.weight, s.modname, s.timeStamp, s.username, s.msg from spicymango s join alerts a on s.id=a.id").fetchall()
 			conn.close()
 			
@@ -197,13 +212,13 @@ def main():
 			json_alerts['aaData'] = []
 
 			for row in rows:
-				if row[0] <= 10:
+				if row[0] <= lmax[0]:
 					priority = "Low"
 					tdclass = "low"
-				if 10 < row[0] < 30:
+				if med[0] < row[0] < med[1]:
 					priority = "Medium"
 					tdclass = "medium"
-				if row[0] >= 30:
+				if row[0] >= hmin[0]:
 					priority = "High"
 					tdclass = "high"
 				
@@ -220,6 +235,9 @@ def main():
 		if username:
 			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
 			conn = sqlite3.connect(database)
+			lmax = conn.cursor().execute("select max from thresholds where tname = \'low\'").fetchone()
+			hmin = conn.cursor().execute("select min from thresholds where tname = \'high\'").fetchone()
+			sliderp = "[%s,%s]," % (lmax[0],hmin[0])
 			rows = conn.cursor().execute("select id, keyword, weight from keywords order by weight DESC").fetchall()
 			conn.close()
 			trRows = ""
@@ -227,7 +245,7 @@ def main():
 			for row in rows:
 				trRows = trRows + '<tr id=\'%s\'><td>%s</td><td>%s</td></tr>' % (row[0],row[1],row[2])
 
-			return template('set-keywords', dataRows=trRows)
+			return template('set-keywords', dataRows=trRows, slider=sliderp)
 		else:
 			redirect('/login')
 
@@ -311,6 +329,26 @@ def main():
 		conn.commit()
 		conn.close()
 		return '1'
+
+	#Route for Threshold
+	@route('/thresholdsave')
+	def tsave():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			lmax = (request.query.get('lmax'),)
+			mmin = request.query.get('mmin')
+			mmax = request.query.get('mmax')
+			hmin = (request.query.get('hmin'),)
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			conn.cursor().execute('UPDATE thresholds SET max = ? WHERE tname = \'low\'', lmax)
+			conn.cursor().execute('UPDATE thresholds SET min = ?, max = ? WHERE tname = \'med\'', (mmin, mmax))
+			conn.cursor().execute('UPDATE thresholds SET min = ? WHERE tname = \'high\'', hmin)
+			conn.commit()
+			conn.close()
+			return '1'
+		else: 
+			return 'Error'
 
 	#Route for png images
 	@route('/images/:filename#.*\.png#')

@@ -66,13 +66,13 @@
 				<br />
 				<form>
 					<label for="lowrange">Low Range:</label>
-					<input id="lowrange" type="text" style="border: 0px; font-weight: bold; color: grey;"/>
+					<span id="lowrange" style="border: 0px; font-weight: bold; color: #666;"></span>
 					<br />
 					<label for="medrange">Medium Range:</label>
-					<input id="medrange" type="text" style="border: 0px; font-weight: bold; color: orange;"/>
+					<span id="medrange" style="border: 0px; font-weight: bold; color: #F90;"></span>
 					<br />
 					<label for="highrange">High Range:</label>
-					<input id="highrange" type="text" style="border: 0px; font-weight: bold; color: red;"/>
+					<span id="highrange" style="border: 0px; font-weight: bold; color: #BC4848;"></span>
 					<button id="btnThreshold" type="button" class="btn btn-small btn-grey" style="float: right;" disabled="disabled">Save</button>
 				</form>
 			</div>
@@ -112,7 +112,14 @@ $(function ()
 									cssclass:"required"
 									},
 									{
-									cssclass:"required digits"
+									cssclass:"required digits",
+									oValidationOptions: {
+										rules: {
+											value: {
+											  range: [1, 100]
+											}
+										  }
+										}
 									}
 						],
 	});
@@ -124,13 +131,8 @@ $(function ()
 			$(this).attr("disabled", "disabled");
 			$.ajax({
 				url: "reAnalyze",
-								  
 				type: "GET",
-
-				//Do not cache the page
 				cache: false,
-
-				//success
 				success: function (html) {     
 					if (html==1) {
 						$('#btnAnalyze').addClass( "btn-orange" ); 
@@ -147,24 +149,44 @@ $(function ()
 		range: true,
 		min: 1,
 		max: 100,
-		values: [ 30,60 ],
+		values: {{slider}} 
 		slide: function( event, ui ) {
-			$( "#lowrange" ).val( "1 - " + ui.values[ 0 ] );
-			$( "#medrange" ).val( (ui.values[ 0 ] + 1) + " - " + (ui.values[ 1 ] - 1) );
-			$( "#highrange" ).val( ui.values[ 1 ] + " - 100" );
+			$( "#lowrange" ).text( "1 - " + ui.values[ 0 ] );
+			$( "#medrange" ).text( (ui.values[ 0 ] + 1) + " - " + (ui.values[ 1 ] - 1) );
+			$( "#highrange" ).text( ui.values[ 1 ] + " - 100" );
 			$('#btnThreshold').addClass( "btn-navy" ); 
 			$('#btnThreshold').removeClass( "btn-grey" );
 			$('#btnThreshold').removeAttr("disabled");
 									 }
 	});
-	$( "#lowrange" ).val( "1 - " + $( "#slider" ).slider( "values", 0 ) );
-	$( "#medrange" ).val( ($( "#slider" ).slider( "values", 0 ) + 1) + " - " + ( $( "#slider" ).slider( "values", 1 ) - 1) );
-	$( "#highrange" ).val( $( "#slider" ).slider( "values", 1 ) + " - 100" );
+	$( "#lowrange" ).text( "1 - " + $( "#slider" ).slider( "values", 0 ) );
+	$( "#medrange" ).text( ( $( "#slider" ).slider( "values", 0 ) + 1) + " - " + ( $( "#slider" ).slider( "values", 1 ) - 1) );
+	$( "#highrange" ).text( $( "#slider" ).slider( "values", 1 ) + " - 100" );
 	$('#btnThreshold').click(function (){
-			$(this).addClass( "btn-grey" ); 
-			$(this).removeClass( "btn-navy" );
-			alert('Saved');
-			$(this).attr("disabled", "disabled");
+			$.ajax({
+				url: "thresholdsave",
+				type: "GET",
+				cache: false,
+				data: { lmax : $("#slider").slider("values", 0) , mmin : ($("#slider").slider("values", 0) + 1) , mmax : ($("#slider").slider("values", 1) - 1) , hmin : $("#slider").slider("values", 1) },
+				success: function (html) {     
+					if (html==1) {
+						$('#btnThreshold').addClass( "btn-grey" ); 
+						$('#btnThreshold').removeClass( "btn-navy" );
+						$('#btnThreshold').attr("disabled", "disabled");
+					} else 
+						alert('Sorry, unexpected error.');
+					},
+				error: function () {
+					alert("Could not connect to Server");
+				}
+			});
+	});
+	$("#formAddNewRow").validate({
+	  rules: {
+		weight: {
+		  range: [1, 100]
+		}
+	  }
 	});
 });
 

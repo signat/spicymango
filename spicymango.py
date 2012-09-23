@@ -63,6 +63,10 @@ if check_config("OUTPUT_SQLITE3=") == 'ON':
 		c.execute('CREATE TABLE spicymango (modname TEXT, username TEXT COLLATE NOCASE, hostname TEXT COLLATE NOCASE, ircchan TEXT, msg TEXT COLLATE NOCASE, timeStamp DATE, hash TEXT, id INTEGER PRIMARY KEY)')
 		c.execute('CREATE TABLE keywords (id INTEGER PRIMARY KEY, keyword TEXT, weight INTEGER, count INTEGER)')
 		c.execute('CREATE TABLE alerts (id INTEGER, weight INTEGER)')
+		c.execute('CREATE TABLE thresholds (tname TEXT, min INTEGER, max INTEGER)')
+		c.execute("INSERT INTO thresholds VALUES('low',1,30)")
+		c.execute("INSERT INTO thresholds VALUES('med',31,59)")
+		c.execute("INSERT INTO thresholds VALUES('high',60,100)")
 		c.execute('CREATE UNIQUE INDEX hashindex ON spicymango (hash)')
 		conn.commit()
 		conn.close()
@@ -85,8 +89,7 @@ if enable_modfacebook == 'ON':
 	mod_counter += 1
 #If no modules are enabled in the config, error and exit.
 if mod_counter == 0:
-	print_error(module,"Please enable a module in the config file.")
-	sys.exit()
+	print_warning(module,"No modules have been configured.")
 
 # Run Web View if enabled in the config
 enable_webview = check_config("WEB_VIEW=")
