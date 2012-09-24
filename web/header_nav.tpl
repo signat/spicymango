@@ -41,7 +41,7 @@
 					<a href="javascript:;" class="mega-tab"><font style="color: orange;">Settings</font></a>
 					<div class="mega-content mega-menu ">
 						<ul>
-							<li><a href="sample_gallery.html">Change Password</a></li>
+							<li><a href="/set-password">Change Password</a></li>
 							<li><a href="/set-keywords">Keywords</a></li>			
 						</ul>
 					</div>						

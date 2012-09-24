@@ -139,11 +139,21 @@ def main():
 	
 	@post('/login-check')
 	def logincheck():
-		if request.forms.get('login_user') == 'admin' and request.forms.get('login_password') == 'sm1234':
-						response.set_cookie("loggedin", request.forms.get('login_user'), secret='sm2345-45634')
-						redirect('/')
-		else:
-			redirect('/login?action=error')
+		import hashlib
+		if request.forms.get("login_user") and request.forms.get("login_password"):
+			user = request.forms.get("login_user")
+			password = hashlib.md5(request.forms.get("login_password")).hexdigest()
+
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			isUser = conn.cursor().execute("SELECT COUNT(username) FROM users WHERE username = ? and password = ?", (user,password)).fetchone()
+			conn.close()
+
+			if isUser[0] == 1:
+				response.set_cookie("loggedin", request.forms.get('login_user'), secret='sm2345-45634')
+				redirect('/')
+			else:
+				redirect('/login?action=error')
 
 	#Route for Events
 	@route('/events')
@@ -227,6 +237,37 @@ def main():
 
 			response.set_header('Content-type', 'application/json')
 			return json.dumps(json_alerts, indent=4)
+
+	#Route for Password Change
+	@route('/set-password')
+	def set_pass():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			return template('set-password')
+		else:
+			redirect('/login')
+	
+	#Route for AJAX Password Change
+	@post('/setpass')
+	def pass_set():
+		import hashlib
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			cpass = hashlib.md5(request.forms.get('currentpass')).hexdigest()
+			npass = hashlib.md5(request.forms.get('newpass')).hexdigest()
+
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			
+			if conn.cursor().execute("SELECT COUNT(username) from users WHERE password = ?", (cpass,)).fetchone()[0] == 1:
+				conn.cursor().execute("UPDATE users SET password = ? WHERE password = ?", (npass,cpass))
+				conn.commit()
+				conn.close()
+				response.delete_cookie("loggedin")
+				return "1"
+			else:
+				conn.close()
+				return "2"
 	
 	#Route for Keywords
 	@route('/set-keywords')

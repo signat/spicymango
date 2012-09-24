@@ -67,6 +67,8 @@ if check_config("OUTPUT_SQLITE3=") == 'ON':
 		c.execute("INSERT INTO thresholds VALUES('low',1,30)")
 		c.execute("INSERT INTO thresholds VALUES('med',31,59)")
 		c.execute("INSERT INTO thresholds VALUES('high',60,100)")
+		c.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, isAdmin TEXT)")
+		c.execute("INSERT INTO users VALUES(NULL,'admin','635b6a83deafb312c1c0aec4d9de940a','yes')")
 		c.execute('CREATE UNIQUE INDEX hashindex ON spicymango (hash)')
 		conn.commit()
 		conn.close()
