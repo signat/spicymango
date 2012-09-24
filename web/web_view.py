@@ -151,6 +151,11 @@ def main():
 
 			if isUser[0] == 1:
 				response.set_cookie("loggedin", request.forms.get('login_user'), secret='sm2345-45634')
+				if request.forms.get("remember") and request.forms.get("remember") == "yes":
+					exp = datetime.datetime(2025, 1, 1, 00, 00, 00)
+					response.set_cookie("remember", request.forms.get('login_user'), expires=exp)
+				else:
+					response.delete_cookie("remember")
 				redirect('/')
 			else:
 				redirect('/login?action=error')

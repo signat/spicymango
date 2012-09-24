@@ -23,17 +23,16 @@
 <div id="login-body" class="clearfix"> 
 
 	         
-	<form action="/login-check" name="login" id="login_form" method="post">
+	<form action="/login-check" name="login" id="login_form" method="post" autocomplete="off">
 		
-		
-	                    <div class="content_front">
+		<div class="content_front">
 
 	        <div class="pad">
 	        	
 	        	<div class="field">
 					<label>Username:</label>
 					
-					<div class=""><span class="input"><input name="login_user" id="login_user" class="text" type="text" /></span></div>
+					<div class=""><span class="input"><input name="login_user" id="login_user" class="text" type="text" value="" /></span></div>
 				</div> <!-- .field -->
 				
 				<div class="field">
@@ -67,7 +66,19 @@
 
 </div> <!-- #login -->
 
+<script  type="text/javascript" src="js/jquery/jquery.1.4.2.min.js"></script>
+<script  type="text/javascript" src="js/jquery.cookie.js"></script>
+<script type="text/javascript" charset="utf-8">
 
+$(document).ready( function () { 
+	if ( $.cookie('remember') != null ) {
+		var user = $.cookie('remember');
+		$("#login_user").val( user );
+		$("#remember").attr('checked','checked');
+	}
+});
+
+</script>
 </body>
 
 </html>
