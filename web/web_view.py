@@ -105,7 +105,7 @@ def main():
 				if rall[0] >= hmin[0]:
 					priority = "high"
 					priority_label = "High"
-				if med[0] < rall[0] < med[1]:
+				if med[0] <= rall[0] <= med[1]:
 					priority = "medium"
 					priority_label = "Medium"
 				if rall[0] <= lmax[0]:
@@ -225,7 +225,7 @@ def main():
 				if row[0] <= lmax[0]:
 					priority = "Low"
 					tdclass = "low"
-				if med[0] < row[0] < med[1]:
+				if med[0] <= row[0] <= med[1]:
 					priority = "Medium"
 					tdclass = "medium"
 				if row[0] >= hmin[0]:
