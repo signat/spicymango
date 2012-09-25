@@ -32,34 +32,35 @@ def rmNonprint(myStr):
 
 class Output(object):
 	#Define all attributes for module output
-        modname = ''
-        username = ''
+	modname = ''
+	username = ''
 	hostname = ''
 	ircchan = ''
 	msg = ''
 	
 	
 	#Method to send output to various enabled destinations
-        def send_output(self):
+	def send_output(self):
 		#Method function for writing to a file
-                def to_File():
-                        path = check_config("OUTPUT_FILE_NAME=")
-                	if not os.path.isfile(path):
-                        	outputfile = file(path, "w")
-                	else:
-                       		outputfile = file(path, "a")
+		def to_File():
+			path = check_config("OUTPUT_FILE_NAME=")
+			if not os.path.isfile(path):
+				outputfile = file(path, "w")
+			else:
+				outputfile = file(path, "a")
 
 			outString = str(datetime.datetime.now()) + ": " + rmNonprint(self.modname)
 			if self.username != '':
 				outString += ": " + rmNonprint(self.username)
 			if self.hostname != '':
-                                outString += ": " + rmNonprint(self.hostname)
+				outString += ": " + rmNonprint(self.hostname)
 			if self.ircchan != '':
-                                outString += ": " + rmNonprint(self.ircchan)
+				outString += ": " + rmNonprint(self.ircchan)
 			if self.msg != '':
-                                outString += ": " + rmNonprint(self.msg)
-                	outputfile.write(outString + "\n")
-                	outputfile.close()
+				outString += ": " + rmNonprint(self.msg)
+				outputfile.write(outString + "\n")
+				outputfile.close()
+		
 		def to_Sqlite3():
 			import sqlite3, hashlib, re
 			
@@ -85,9 +86,10 @@ class Output(object):
 					total_weight = 0
 					#Iterate through keywords per event
 					for keyword in keywords:
+						event_total = rmNonprint(self.username) + " " + rmNonprint(self.ircchan) + " " + rmNonprint(self.msg)
 						#find a match
 						key_counter = 0
-						if re.search(keyword[1], rmNonprint(self.msg), re.IGNORECASE):
+						if re.search(keyword[1], event_total, re.IGNORECASE):
 							key_counter += 1
 							c.execute('UPDATE keywords SET count = (count + ?) WHERE keyword = ?', (key_counter, keyword[1]))
 							total_weight += keyword[2]
@@ -107,7 +109,7 @@ class Output(object):
 		output_count = 0
 		
 		file_enable = check_config("OUTPUT_FILE")
-        	if file_enable == "ON":
+		if file_enable == "ON":
 			to_File()
 			output_count = 1
 		sqlite3_enable = check_config("OUTPUT_SQLITE3=")
@@ -116,14 +118,14 @@ class Output(object):
 			output_count = 1
 		#If no output destinations are defined in config, send output to console
 		if output_count == 0 or check_config("OUTPUT_CONSOLE=") == "ON":
-                        conString = ''
+			conString = ''
 			if self.username != '':
-                                conString += ": " + rmNonprint(self.username)
-                        if self.hostname != '':
-                                conString += ": " + rmNonprint(self.hostname)
-                        if self.ircchan != '':
-                                conString += ": " + rmNonprint(self.ircchan)
-                        if self.msg != '':
-                                conString += ": " + rmNonprint(self.msg)
+				conString += ": " + rmNonprint(self.username)
+			if self.hostname != '':
+				conString += ": " + rmNonprint(self.hostname)
+			if self.ircchan != '':
+				conString += ": " + rmNonprint(self.ircchan)
+			if self.msg != '':
+				conString += ": " + rmNonprint(self.msg)
 
 			print '\033[94m' + rmNonprint(self.modname) + ": " + '\033[0m' + str(datetime.datetime.now()) + conString

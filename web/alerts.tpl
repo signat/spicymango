@@ -26,14 +26,17 @@
 					<div class="stat">
 						<h4>Total High Alerts</h4>
 						<span class="value">{{total_alert_highs}}</span>
+						<span class="view_all"><a id="allhighs" name="allhighs" href="#">View All Highs</a></span>
 					</div>
 					<div class="stat">
 						<h4>Total Medium Alerts</h4>
 						<span class="value">{{total_alert_mediums}}</span>
+						<span class="view_all"><a id="allmediums" name="allmediums" href="#">View All Mediums</a></span>
 					</div>
 					<div class="stat">
 						<h4>Total Low Alerts</h4>
 						<span class="value">{{total_alert_lows}}</span>
+						<span class="view_all"><a id="alllows" name="alllows" href="#">View All Lows</a></span>
 					</div>
 				</div>
 			</div> <!-- .portlet-content -->
@@ -59,7 +62,7 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<th><input type="text" name="search_level" value="Search Level" class="search_init" /></th>
+							<th><input type="text" id="search_level" name="search_level" value="Search Level" class="search_init" /></th>
 							<th><input type="text" name="search_weight" value="Search Weight" class="search_init" /></th>
 							<th><input type="text" name="search_module" value="Search Module" class="search_init" /></th>
 							<th><input type="text" name="search_date" value="Search Date" class="search_init" /></th>
@@ -133,6 +136,23 @@ $(document).ready(function ()
 		}
 	} );
 
+	$("#allhighs").click( function () {
+		$("#search_level").removeClass("search_init");
+		$("#search_level").val("High");
+		$("#alerts_table").dataTable().fnFilter("High", 0);
+	});
+
+	$("#allmediums").click( function () {
+		$("#search_level").removeClass("search_init");
+		$("#search_level").val("Medium");
+		$("#alerts_table").dataTable().fnFilter("Medium", 0);
+	});
+	
+	$("#alllows").click( function () {
+		$("#search_level").removeClass("search_init");
+		$("#search_level").val("Low");
+		$("#alerts_table").dataTable().fnFilter("Low", 0);
+	});
 });
 </script>
 

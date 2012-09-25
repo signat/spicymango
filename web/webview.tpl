@@ -201,6 +201,7 @@ $(function ()
 {
         slate.init ();
         slate.portlet.init ();
+		setInterval("location.reload(true)", 300000);
 });
 </script>
 

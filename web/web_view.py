@@ -356,22 +356,23 @@ def main():
 		conn.cursor().execute('DELETE from alerts')
 		conn.cursor().execute('UPDATE keywords SET count = 0')
 
-		events = conn.cursor().execute('SELECT msg,id from spicymango').fetchall()
+		events = conn.cursor().execute('SELECT username,ircchan,msg,id from spicymango').fetchall()
 		keywords = conn.cursor().execute('SELECT * from keywords').fetchall()
 		
 		#Iterate through Events
 		for event in events:
+			total_event = event[0] + " " + event[1] + " " + event[2]
 			total_weight = 0
 			#Iterate through keywords per event
 			for keyword in keywords:
 				#find a match
 				key_counter = 0
-				if re.search(keyword[1], event[0], re.IGNORECASE):
+				if re.search(keyword[1], total_event, re.IGNORECASE):
 					key_counter += 1
 					conn.cursor().execute('UPDATE keywords SET count = (count + ?) WHERE keyword = ?', (key_counter, keyword[1]))
 					total_weight += keyword[2]
 			if total_weight > 0:
-				conn.cursor().execute('INSERT INTO alerts VALUES(?, ?)', (event[1], total_weight))
+				conn.cursor().execute('INSERT INTO alerts VALUES(?, ?)', (event[3], total_weight))
 		conn.commit()
 		conn.close()
 		return '1'
