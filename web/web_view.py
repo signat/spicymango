@@ -58,10 +58,10 @@ def main():
 			chart_highs = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight >= ? and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)", (hmin[0],)).fetchall()
 			chart_mediums = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight between ? and ? and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)", (med[0],med[1])).fetchall()
 			chart_lows = conn.cursor().execute("select count(s.id), strftime('%H', s.timeStamp) from spicymango s join alerts a on s.id = a.id where a.weight <= ? and s.timeStamp >= datetime('now', 'localtime', '-12 hour') group by strftime('%H', s.timeStamp)", (lmax[0],)).fetchall()
-			recent_alls = conn.cursor().execute("select a.weight, s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id order by timeStamp DESC limit 7").fetchall()
-			recent_highs = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight >= ? order by timeStamp DESC limit 7", (hmin[0],)).fetchall()
-			recent_mediums = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight between ? and ? order by timeStamp DESC limit 7", (med[0],med[1])).fetchall()
-			recent_lows = conn.cursor().execute("select s.msg, s.timeStamp from spicymango s join alerts a on s.id=a.id where a.weight <= ? order by timeStamp DESC limit 7", (lmax[0],)).fetchall()
+			recent_alls = conn.cursor().execute("select a.weight, s.msg, s.timeStamp, s.id from spicymango s join alerts a on s.id=a.id order by timeStamp DESC limit 7").fetchall()
+			recent_highs = conn.cursor().execute("select s.msg, s.timeStamp, s.id from spicymango s join alerts a on s.id=a.id where a.weight >= ? order by timeStamp DESC limit 7", (hmin[0],)).fetchall()
+			recent_mediums = conn.cursor().execute("select s.msg, s.timeStamp, s.id from spicymango s join alerts a on s.id=a.id where a.weight between ? and ? order by timeStamp DESC limit 7", (med[0],med[1])).fetchall()
+			recent_lows = conn.cursor().execute("select s.msg, s.timeStamp, s.id from spicymango s join alerts a on s.id=a.id where a.weight <= ? order by timeStamp DESC limit 7", (lmax[0],)).fetchall()
 			top_users = conn.cursor().execute("select s.username, count(s.username) from spicymango s join alerts a on s.id = a.id group by username order by count(username) DESC LIMIT 5").fetchall()
 			top_alerts = conn.cursor().execute("select s.msg, a.weight from spicymango s join alerts a on s.id = a.id order by a.weight DESC LIMIT 5").fetchall()
 			top_keywords = conn.cursor().execute("select keyword, count from keywords order by count DESC LIMIT 5").fetchall()
@@ -112,17 +112,30 @@ def main():
 					priority = "low"
 					priority_label = "Low"
 					
-				r_all = r_all + "<tr><td><span class='ticket {!s}'>{!s}</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(priority, priority_label, rall[1], rall[2])
+				r_all = r_all + "<tr><td><span class='ticket {!s}'>{!s}</span></td><td class='full'><a id='{!s}' href='javascript:void(0)'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(priority, priority_label, rall[3], rall[1], rall[2])
 			for rhigh in recent_highs:
-				r_high = r_high + "<tr><td><span class='ticket high'>High</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rhigh[0], rhigh[1])
+				r_high = r_high + "<tr><td><span class='ticket high'>High</span></td><td class='full'><a id='{!s}' href='javascript:void(0)'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rhigh[2],rhigh[0], rhigh[1])
 			for rmedium in recent_mediums:
-				r_medium = r_medium + "<tr><td><span class='ticket medium'>Medium</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rmedium[0], rmedium[1])
+				r_medium = r_medium + "<tr><td><span class='ticket medium'>Medium</span></td><td class='full'><a id='{!s}' href='javascript:void(0)'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rmedium[2], rmedium[0], rmedium[1])
 			for rlow in recent_lows:
-				r_low = r_low + "<tr><td><span class='ticket low'>Low</span></td><td class='full'><a href='#'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rlow[0], rlow[1])
+				r_low = r_low + "<tr><td><span class='ticket low'>Low</span></td><td class='full'><a id='{!s}' href='javascript:void(0)'>{!s}</a></td><td class='who'>{!s}</td></tr>".format(rlow[2], rlow[0], rlow[1])
 				
 			return template('webview', eventcount=events[0], highs=high_events[0], mediums=medium_events[0], lows=low_events[0], chart_hours=c_hours, chart_highs=c_highs, chart_mediums=c_mediums, chart_lows=c_lows, recent_all=r_all, recent_highs=r_high, recent_mediums=r_medium, recent_lows=r_low, topusers=top_users, topalerts=top_alerts, topkeywords=top_keywords)
 		else:
 			redirect('/login')
+
+	#Route for Dashboard Detail
+	@route('/dash-detail')
+	def dash():
+		username = request.get_cookie("loggedin", secret='sm2345-45634')
+		if username:
+			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			conn = sqlite3.connect(database)
+			if request.query.get('type') == "recent":
+				event_id = request.query.get('eid')
+				event = conn.cursor().execute("SELECT s.modname, s.timeStamp, a.weight, s.username, s.hostname, s.ircchan, s.msg FROM spicymango s JOIN alerts a ON s.id = a.id WHERE s.id = ?",(event_id,)).fetchone()
+				conn.close()
+				return "<tr><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td></tr>".format(event[0],event[1],event[2],event[3],event[4],event[5],event[6])
 	
 	#Routes for Login
 	@route('/login')

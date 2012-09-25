@@ -101,7 +101,7 @@
 				</ul>
 			</div> <!-- .portlet-header -->
 			
-			<div class="portlet-content">
+			<div id="recent-alerts" class="portlet-content">
 				<div id="allalerts" class="portlet-tab-content">
 					<table class="support_table" cellspacing="0">
 						<tbody>
@@ -188,10 +188,27 @@
 			</div> <!-- .portlet-content -->			
 		</div> <!-- .portlet -->
 	</div> <!-- #content -->
+	<!-- Dialogs for Dashboard -->
+	<div id="dialog-form" title="Details">
+		<table cellpadding="0" cellspacing="0" border="0" class="display">
+			<thead>
+				<th>Module</th>
+				<th>TimeStamp</th>
+				<th>Weight</th>
+				<th>Username</th>
+				<th>Hostname</th>
+				<th>IRC Chan</th>
+				<th>Message</th>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
 
 %include footer	
 
 <script  type="text/javascript" src="js/jquery/jquery.1.4.2.min.js"></script>
+<script  type="text/javascript" src="js/jquery-ui.js"></script>
 <script  type="text/javascript" src="js/slate/slate.js"></script>
 <script  type="text/javascript" src="js/slate/slate.portlet.js"></script>
 <script  type="text/javascript" src="js/plugin.js"></script>
@@ -201,6 +218,23 @@ $(function ()
 {
         slate.init ();
         slate.portlet.init ();
+		$("#dialog-form").dialog({ autoOpen: false, width: 900 });
+		$(".support_table a").click(function() {
+			var id = this.id
+			$.ajax({
+				url: 'dash-detail',
+				type: 'GET',
+				cache: false,
+				data: { type : 'recent', eid : id },
+				success: function(html) {
+					$("#dialog-form tbody").html(html);
+					$("#dialog-form").dialog( "open" );
+				},
+				error: function() {
+					alert('Error');
+				}
+			});
+		});
 		setInterval("location.reload(true)", 300000);
 });
 </script>
