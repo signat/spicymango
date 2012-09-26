@@ -146,11 +146,11 @@
 				<div id="topusers" class="portlet-tab-content">
 					<table cellspacing="0" class="inbox_table">
 						<tbody>
-							<tr><td></td><td><b>Username</b></td><td><b># of Events</b></td></tr>
+							<tr><td></td><td><b>Username</b></td><td><b># of Alerts</b></td></tr>
 							% for user in topusers:
 							<tr>
 								<td></td>
-								<td class="full"><a href="#">{{user[0]}}</a></td>
+								<td class="full"><a href="javascript:void(0)">{{user[0]}}</a></td>
 								<td rel="tooltip" title="Number of alerts by this user.">{{user[1]}}</td>
 							</tr>
 							% end
@@ -164,7 +164,7 @@
 							% for alert in topalerts:
 							<tr>
 								<td></td>
-								<td class="full"><a href="#">{{alert[0]}}</a></td>
+								<td class="full"><a id="{{alert[2]}}" href="javascript:void(0)">{{alert[0]}}</a></td>
 								<td rel="tooltip" title="Weighted value.">{{alert[1]}}</td>
 							</tr>
 							% end
@@ -178,7 +178,7 @@
 							% for keyword in topkeywords:
 							<tr>
 								<td></td>
-								<td class="full"><a href="#">{{keyword[0]}}</a></td>
+								<td class="full">{{keyword[0]}}</td>
 								<td rel="tooltip" title="Number of occurances.">{{keyword[1]}}</td>
 							</tr>
 							% end
@@ -189,13 +189,27 @@
 		</div> <!-- .portlet -->
 	</div> <!-- #content -->
 	<!-- Dialogs for Dashboard -->
-	<div id="dialog-form" title="Details">
+	<div id="dialog-recent" title="Details">
 		<table cellpadding="0" cellspacing="0" border="0" class="display">
 			<thead>
 				<th>Module</th>
 				<th>TimeStamp</th>
 				<th>Weight</th>
 				<th>Username</th>
+				<th>Hostname</th>
+				<th>IRC Chan</th>
+				<th>Message</th>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<div id="dialog-user" title="">
+		<table cellpadding="0" cellspacing="0" border="0" class="display">
+			<thead>
+				<th>Module</th>
+				<th>TimeStamp</th>
+				<th>Weight</th>
 				<th>Hostname</th>
 				<th>IRC Chan</th>
 				<th>Message</th>
@@ -218,8 +232,9 @@ $(function ()
 {
         slate.init ();
         slate.portlet.init ();
-		$("#dialog-form").dialog({ autoOpen: false, width: 900 });
-		$(".support_table a").click(function() {
+		$("#dialog-recent").dialog({ autoOpen: false, width: 900 });
+		$("#dialog-user").dialog({ autoOpen: false, width: 900 });
+		$(".support_table a, #topalerts a").click(function() {
 			var id = this.id
 			$.ajax({
 				url: 'dash-detail',
@@ -227,8 +242,25 @@ $(function ()
 				cache: false,
 				data: { type : 'recent', eid : id },
 				success: function(html) {
-					$("#dialog-form tbody").html(html);
-					$("#dialog-form").dialog( "open" );
+					$("#dialog-recent tbody").html(html);
+					$("#dialog-recent").dialog( "open" );
+				},
+				error: function() {
+					alert('Error');
+				}
+			});
+		});
+		$("#topusers a").click(function() {
+			var user = this.innerHTML;
+			$.ajax({
+				url: 'dash-detail',
+				type: 'GET',
+				cache: false,
+				data: { type : 'topuser', username : user },
+				success: function(html) {
+					$("#dialog-user").dialog({ title : "Last 10 Alerts from Username: " + user })
+					$("#dialog-user tbody").html(html);
+					$("#dialog-user").dialog( "open" );
 				},
 				error: function() {
 					alert('Error');

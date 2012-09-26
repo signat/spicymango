@@ -63,7 +63,7 @@ def main():
 			recent_mediums = conn.cursor().execute("select s.msg, s.timeStamp, s.id from spicymango s join alerts a on s.id=a.id where a.weight between ? and ? order by timeStamp DESC limit 7", (med[0],med[1])).fetchall()
 			recent_lows = conn.cursor().execute("select s.msg, s.timeStamp, s.id from spicymango s join alerts a on s.id=a.id where a.weight <= ? order by timeStamp DESC limit 7", (lmax[0],)).fetchall()
 			top_users = conn.cursor().execute("select s.username, count(s.username) from spicymango s join alerts a on s.id = a.id group by username order by count(username) DESC LIMIT 5").fetchall()
-			top_alerts = conn.cursor().execute("select s.msg, a.weight from spicymango s join alerts a on s.id = a.id order by a.weight DESC LIMIT 5").fetchall()
+			top_alerts = conn.cursor().execute("select s.msg, a.weight, s.id from spicymango s join alerts a on s.id = a.id order by a.weight DESC LIMIT 5").fetchall()
 			top_keywords = conn.cursor().execute("select keyword, count from keywords order by count DESC LIMIT 5").fetchall()
 			conn.close()
 			
@@ -136,6 +136,14 @@ def main():
 				event = conn.cursor().execute("SELECT s.modname, s.timeStamp, a.weight, s.username, s.hostname, s.ircchan, s.msg FROM spicymango s JOIN alerts a ON s.id = a.id WHERE s.id = ?",(event_id,)).fetchone()
 				conn.close()
 				return "<tr><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td></tr>".format(event[0],event[1],event[2],event[3],event[4],event[5],event[6])
+			if request.query.get('type') == "topuser":
+				user = request.query.get('username')
+				events = conn.cursor().execute("SELECT s.modname, s.timeStamp, a.weight, s.hostname, s.ircchan, s.msg FROM spicymango s JOIN alerts a ON s.id = a.id WHERE s.username = ? ORDER BY s.timeStamp DESC LIMIT 10",(user,)).fetchall()
+				conn.close()
+				results = ""
+				for event in events:
+					results = results + "<tr><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td><td>{!s}</td></tr>".format(event[0],event[1],event[2],event[3],event[4],event[5])
+				return results 
 	
 	#Routes for Login
 	@route('/login')
