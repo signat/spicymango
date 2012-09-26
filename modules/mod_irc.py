@@ -88,6 +88,12 @@ def main():
 	while 1:
 	    MyIRC.main_loop( )
 
-#Start the module
-print_status(module,"loading...")
-thread.start_new_thread(main, ())
+#Get keywords for module
+keywords = get_keywords("mod_irc")
+#Create a new thread for each keyword and run
+if len(keywords) > 0:
+	print_status(module,"loading...")
+	thread.start_new_thread(main, ())
+else:
+	print_error(module, "No Keywords defined for this module")
+

@@ -73,9 +73,12 @@ def main(query,*args):
 		#Set delay should be at least 5 seconds.
 		time.sleep(interval)
 
-#Start the module
-print_status(module,"loading...")
+#Get keywords for module
 keywords = get_keywords("mod_twitter")
-#Create a new thread for each search phrase
-for keyword in keywords:
-	thread.start_new_thread(main, (keyword[1],2))
+#Create a new thread for each keyword and run
+if len(keywords) > 0:
+	print_status(module,"loading...")
+	for keyword in keywords:
+		thread.start_new_thread(main, (keyword[1],2))
+else:
+	print_error(module, "No Keywords defined for this module")

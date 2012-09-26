@@ -165,7 +165,7 @@ def main():
 			user = request.forms.get("login_user")
 			password = hashlib.md5(request.forms.get("login_password")).hexdigest()
 
-			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			database = "users.db"
 			conn = sqlite3.connect(database)
 			isUser = conn.cursor().execute("SELECT COUNT(username) FROM users WHERE username = ? and password = ?", (user,password)).fetchone()
 			conn.close()
@@ -282,7 +282,7 @@ def main():
 			cpass = hashlib.md5(request.forms.get('currentpass')).hexdigest()
 			npass = hashlib.md5(request.forms.get('newpass')).hexdigest()
 
-			database = check_config("OUTPUT_SQLITE3_DB_PATH=")
+			database = "users.db" 
 			conn = sqlite3.connect(database)
 			
 			if conn.cursor().execute("SELECT COUNT(username) from users WHERE password = ?", (cpass,)).fetchone()[0] == 1:
