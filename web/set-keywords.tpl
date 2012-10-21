@@ -53,7 +53,7 @@
                     <input type="text" name="keyword" id="keyword" class="required" rel="0" />
                     <br />
                     <label for="weight">Weight</label><br />
-                    <input type="text" name="weight" id="weight" class="required digits" rel="1" />
+                    <input type="text" name="weight" id="weight" class="required" rel="1" />
                     <br />
                 </form>
 
@@ -116,7 +116,7 @@ $(function ()
 									oValidationOptions: {
 										rules: {
 											value: {
-											  range: [1, 100]
+											  range: [-100, 100]
 											}
 										  }
 										}
@@ -184,7 +184,7 @@ $(function ()
 	$("#formAddNewRow").validate({
 	  rules: {
 		weight: {
-		  range: [1, 100]
+		  range: [-100, 100]
 		}
 	  }
 	});
