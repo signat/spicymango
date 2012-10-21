@@ -78,3 +78,20 @@ def get_keywords(param):
                         if match:
 				wordlist.append(eval(line))
         return wordlist
+
+def get_feeds(param):
+	path = os.path.join(os.path.dirname(__file__), '..', 'feeds')
+        try:
+                fileopen = file(path, "r")
+        except:
+                print_error(module,"Cannot find feeds file. Make sure its in the spicymango directory.")
+                sys.exit()
+        feedlist = []
+        # iterate through lines in file
+        for line in fileopen:
+                if not re.search('^#.', line):
+			match = re.search('http', line)
+                	if match:
+				feedlist.append(eval(line))
+        return feedlist
+

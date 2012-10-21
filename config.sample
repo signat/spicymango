@@ -69,6 +69,17 @@ MOD_FACEBOOK=OFF
 MOD_FACEBOOK_INTERVAL=30
 
 
+# MOD_RSS by: AntiTree
+# # Download RSS feeds from a supplied list
+# #########################################################################
+# # Enable RSS  module
+MOD_RSS=OFF
+# #
+# # Set the interval (in seconds) that MOD_RSS will query the api
+MOD_RSS_INTERVAL=86400
+#
+
+
 # Output Options
 #########################################################################
 # If no output destination is enabled, output goes to the console.
