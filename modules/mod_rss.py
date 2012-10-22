@@ -27,7 +27,7 @@ sys.path.append("..")
 from src.core import *
 from src.output import *
 import urllib2, urllib, time
-import feedparser
+from includes import feedparser
 import re
 
 #Read in code to dynamically get the module name.

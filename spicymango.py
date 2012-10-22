@@ -94,6 +94,10 @@ enable_modfacebook = check_config("MOD_FACEBOOK=")
 if enable_modfacebook == 'ON':
         import modules.mod_facebook
 	mod_counter += 1
+enable_modrss = check_config("MOD_RSS=")
+if enable_modrss == 'ON':
+        import modules.mod_rss
+	mod_counter += 1
 #If no modules are enabled in the config, error and exit.
 if mod_counter == 0:
 	print_warning(module,"No modules have been configured.")
