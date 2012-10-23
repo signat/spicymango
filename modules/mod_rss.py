@@ -47,13 +47,14 @@ def main(query,keywords,*args):
 
 
 		url = query
-		rss = feedparser.parse(url)
-		print_status(module, 'Collecting feed %s...%s' % (url[0:15],url[-5:]))
+		try:
+		  rss = feedparser.parse(url)
+		  print_status(module, 'Collecting feed %s...%s' % (url[0:15],url[-5:]))
 
-		#Enable this print to see the raw data dump for troubleshooting
-		#print rss
+		  #Enable this print to see the raw data dump for troubleshooting
+		  #print rss
 
-		for e in rss.entries:
+		  for e in rss.entries:
 			if "title" in e:
 				title = e.title
 
@@ -85,8 +86,9 @@ def main(query,keywords,*args):
 			   except KeyError:
 				#pass
 				print("error!!")
-	    
-		#Set delay should be at least 5 seconds maybe more for facebook
+	    	except:
+		  print_error(module, "Could not parse url: %s  check to make sure it is a valid RSS or Atom feed" % url)
+		#Set delay should be at least an hour for RSS feeds
 		time.sleep(interval)
 
 #Get keywords for module
