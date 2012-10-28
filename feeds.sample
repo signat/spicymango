@@ -25,12 +25,14 @@
 #########################################################################
 # 
 # The first item is the feed name. The second item is the regex of what
-# should be included. 
-# Example: ['http://google.com/feed.rss','.*']
+# should be included, the third is either OFF or ON to dictate if the 
+# connection should be anonymized using Tor.
+#  
+# Example: ['http://google.com/feed.rss','.*','ON']
 # 
 # Multiple search lines per module are permissable.
 #
 #########################################################################
 
-#['http://seclists.org/rss/fulldisclosure.rss', '.*']
+#['http://seclists.org/rss/fulldisclosure.rss', '.*', 'ON']
 

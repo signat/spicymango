@@ -80,6 +80,19 @@ MOD_RSS_INTERVAL=86400
 #
 
 
+# Tor Options
+########################################################################
+# Host where Tor is running
+TOR_HOST="localhost"
+# Standard SOCKS port tor is listening on
+TOR_PORT=9050
+# Tor Control Port. Must be enabled in the "torrc" file first
+TOR_CTL_PORT=9051
+# Tor control port password
+TOR_PASS=""
+#
+
+
 # Output Options
 #########################################################################
 # If no output destination is enabled, output goes to the console.
