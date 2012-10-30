@@ -42,11 +42,15 @@ def main(gmail, password, mailbox, *args):
 	global interval
 	while True:
 		body = ""
-		mail = imaplib.IMAP4_SSL('imap.gmail.com')
-		mail.login(gmail, password)
+		try: 
+		  mail = imaplib.IMAP4_SSL('imap.gmail.com')
+		  mail.login(gmail, password)
+		except:
+   		  print_error(module, "Connection reset by gmail...Trying again")
+		  break
 		try: 
 		  mail.select(mailbox)
-  		except
+  		except:
 		  print_error(module, "Incorrect mailbox named: %s" % mailbox)
 		  break
 		result, data = mail.uid('search', None, '(UNSEEN)') 
