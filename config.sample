@@ -80,6 +80,19 @@ MOD_RSS_INTERVAL=86400
 #
 
 
+# MOD_GMAIL by: AntiTree
+# Download gmail messages via IMAP
+########################################################################
+# Enable Gmail module
+MOD_GMAIL=OFF
+# Set interval in seconds at which new messages are checked
+MOD_GMAIL_INTERVAL=600
+# Gmail address
+MOD_GMAIL_EMAIL=""
+# Gmail password (Beware insecure!)
+MOD_GMAIL_PASSWORD=""
+#
+
 # Tor Options
 ########################################################################
 # Host where Tor is running

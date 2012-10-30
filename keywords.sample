@@ -40,3 +40,10 @@
 
 # mod_facebook queries the Facebook graph API
 ['mod_facebook','spicy']
+
+# mod_gmail downloads individual mailboxes/labels for each keyword.
+# For example, to download all of the starred email messages choose 
+# [Gmail]/Starred, for the inbox choose "Inbox". Setup filters in
+# your gmail account prior to using this. 
+# ['mod_gmail', 'Inbox']
+# ['mod_gmail', '[Gmail]/Starred']
