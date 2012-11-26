@@ -34,5 +34,5 @@
 #
 #########################################################################
 
-#['http://seclists.org/rss/fulldisclosure.rss', '.*', 'ON']
+#['http://seclists.org/rss/fulldisclosure.rss', '.*', 'OFF']
 
