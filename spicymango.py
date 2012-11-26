@@ -98,7 +98,8 @@ enable_modrss = check_config("MOD_RSS=")
 if enable_modrss == 'ON':
         import modules.mod_rss
 	mod_counter += 1
-if enable_modrss == 'ON':
+enable_modgmail = check_config("MOD_GMAIL=")
+if enable_modgmail == 'ON':
 	import module.mod_gmail
 	mod_counter += 1
 #If no modules are enabled in the config, error and exit.
