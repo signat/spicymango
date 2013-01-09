@@ -38,24 +38,28 @@ interval = int(check_config("MOD_FACEBOOK_INTERVAL="))
 def main(query,*args):
 	global interval
 	while True:
-            
-		url = "http://graph.facebook.com/search?q=%s&type=post" % (query) 
-		data = json.load(urllib2.urlopen(url))
+		try:
 
-		#Enable this print to see the raw data dump for troubleshooting
-		#print json.dumps(data)
+			url = "http://graph.facebook.com/search?q=%s&type=post" % (query) 
+			data = json.load(urllib2.urlopen(url))
 
-		for post in data['data']:
-			if post['type'] == 'link':
-				try:
-					modOutput = Output()
-					modOutput.modname = module
-					modOutput.username = post['from']['name']
-					modOutput.msg = post['message']
-					modOutput.send_output()
-				except KeyError:
-					pass
-	    
+			#Enable this print to see the raw data dump for troubleshooting
+			#print json.dumps(data)
+
+			for post in data['data']:
+				if post['type'] == 'link':
+					try:
+						modOutput = Output()
+						modOutput.modname = module
+						modOutput.username = post['from']['name']
+						modOutput.msg = post['message']
+						modOutput.send_output()
+					except KeyError:
+						pass
+		except Exception, err:
+			log_error(module, query, str(err))
+			sys.exit(1)
+
 		#Set delay should be at least 5 seconds maybe more for facebook
 		time.sleep(interval)
 

@@ -41,50 +41,54 @@ password  = check_config("MOD_GMAIL_PASSWORD=")
 def main(gmail, password, mailbox, *args):
 	global interval
 	while True:
-		body = ""
-		try: 
-		  mail = imaplib.IMAP4_SSL('imap.gmail.com')
-		  mail.login(gmail, password)
-		except:
-   		  print_error(module, "Connection reset by gmail...Trying again")
-		  break
-		try: 
-		  mail.select(mailbox)
-  		except:
-		  print_error(module, "Incorrect mailbox named: %s" % mailbox)
-		  break
-		result, data = mail.uid('search', None, '(UNSEEN)') 
+		try:
+			body = ""
+			try: 
+				mail = imaplib.IMAP4_SSL('imap.gmail.com')
+				mail.login(gmail, password)
+			except:
+				print_error(module, "Connection reset by gmail...will try again in %d seconds" % interval)
+				break
+			try: 
+				mail.select(mailbox)
+			except:
+				print_error(module, "Incorrect mailbox named: %s" % mailbox)
+				break
+			result, data = mail.uid('search', None, '(UNSEEN)') 
 
-		uids = data[0].split()
-		if not len(uids) > 0:
-			print_status(module, "No new emails in %s mailbox." % mailbox)
-			break
-		print_status(module, "Downloading %s messages from %s mailbox" % (len(uids), mailbox))
-		csv = ",".join(uids) ##TODO: switch this back to a single loop
-		result, msgs = mail.uid('fetch', csv, '(RFC822)')
-		for msg in msgs:
-		 for e in msg:
-    		  eml = email.message_from_string(e)
-   	          maintype = eml.get_content_maintype()
-    		  if maintype == 'multipart':
-      		    for part in eml.get_payload():
-        	      if part.get_content_maintype() == 'text':
-          	 	body = part.get_payload()
-    		  elif maintype == 'text':
-     	 		body = eml.get_payload()
+			uids = data[0].split()
+			if not len(uids) > 0:
+				print_status(module, "No new emails in %s mailbox." % mailbox)
+				break
+			print_status(module, "Downloading %s messages from %s mailbox" % (len(uids), mailbox))
+			csv = ",".join(uids) ##TODO: switch this back to a single loop
+			result, msgs = mail.uid('fetch', csv, '(RFC822)')
+			for msg in msgs:
+				for e in msg:
+					eml = email.message_from_string(e)
+					maintype = eml.get_content_maintype()
+					if maintype == 'multipart':
+						for part in eml.get_payload():
+							if part.get_content_maintype() == 'text':
+								body = part.get_payload()
+					elif maintype == 'text':
+						body = eml.get_payload()
 
-		  if len(body) > 5 and 'RFC822' not in body: ##TODO: fix very hacky
-		    try:
-				modOutput = Output()
-				modOutput.modname = module
-				modOutput.username = eml['From']
-				modOutput.msg = body
-				modOutput.send_output()
-		    except KeyError:
-				print_error(module, 'Error collecting email')
-				pass
-		mail.logout()
-	    
+				if len(body) > 5 and 'RFC822' not in body: ##TODO: fix very hacky
+					try:
+						modOutput = Output()
+						modOutput.modname = module
+						modOutput.username = eml['From']
+						modOutput.msg = body
+						modOutput.send_output()
+					except KeyError:
+						print_error(module, 'Error collecting email')
+						pass
+			mail.logout()
+		except Exception, err:
+			log_error(module, mailbox, str(err))
+			sys.exit(1)
+
 		#Set delay should be at least 5 seconds maybe more for facebook
 		time.sleep(interval)
 

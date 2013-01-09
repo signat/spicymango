@@ -46,6 +46,9 @@ print "Download: svn co http://spicymango.googlecode.com/svn/trunk/ spicymango/"
 print "Licensed under the GNU AGPLv3"
 print ""
 
+#Redirect STDERR
+sys.stderr = open('error.log', 'a')
+
 # First setup configured output destinations
 # If configured and doesn't exist, setup output file
 if check_config("OUTPUT_FILE=") == 'ON':
@@ -100,7 +103,7 @@ if enable_modrss == 'ON':
 	mod_counter += 1
 enable_modgmail = check_config("MOD_GMAIL=")
 if enable_modgmail == 'ON':
-	import module.mod_gmail
+	import modules.mod_gmail
 	mod_counter += 1
 #If no modules are enabled in the config, error and exit.
 if mod_counter == 0:

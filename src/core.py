@@ -95,3 +95,7 @@ def get_feeds(param):
 				feedlist.append(eval(line))
         return feedlist
 
+def log_error(mod, keyword, error):
+	import datetime
+	sys.stderr.write('%s | %s | SEARCH_TERM: %s | ERROR: %s\n' % (datetime.datetime.now(), mod, keyword, error))
+	print_error(mod, 'Keyword: %s - Thread exited with Error' % keyword)

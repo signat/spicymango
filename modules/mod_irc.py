@@ -53,8 +53,6 @@ def main():
 
 	def handle_parsed(prefix, command, params):
 	    if command=="PRIVMSG":
-		#Pull in keywords for module.
-		keywords = get_keywords("mod_irc")
 		for keyword in keywords:
 			hit = re.search(keyword[1], params[1])
 			if hit:
@@ -86,7 +84,11 @@ def main():
 	MyConn.events['parsed'].add_listener(handle_parsed)
 
 	while 1:
-	    MyIRC.main_loop( )
+		try:
+			MyIRC.main_loop( )
+		except Exception, err:
+			log_error(module, keywords[0][1], str(err))
+			sys.exit(1)
 
 #Get keywords for module
 keywords = get_keywords("mod_irc")
