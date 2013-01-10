@@ -9086,9 +9086,9 @@ $.widget("ui.dialog", {
 
 			uiDialogTitlebarClose = $('<a href="#"></a>')
 				.addClass(
-					//'ui-dialog-titlebar-close ' +
-					//'ui-corner-all ' +
-					'btn-titlebar-close ' +
+					'ui-dialog-titlebar-close ' +
+					'ui-corner-all ' +
+					//'btn-titlebar-close ' +
                     'btn-mini ' +
                     'btn-grey ' +
                     'btn-cross'
