@@ -48,18 +48,20 @@ def main(gmail, password, mailbox, *args):
 				mail.login(gmail, password)
 			except:
 				print_error(module, "Connection reset by gmail...will try again in %d seconds" % interval)
-				break
+				time.sleep(interval)
+				continue
 			try: 
 				mail.select(mailbox)
+				result, data = mail.uid('search', None, '(UNSEEN)') 
 			except:
-				print_error(module, "Incorrect mailbox named: %s" % mailbox)
-				break
-			result, data = mail.uid('search', None, '(UNSEEN)') 
+				log_error(module, mailbox, "Incorrect mailbox named: %s" % mailbox)
+				sys.exit(1)
 
 			uids = data[0].split()
 			if not len(uids) > 0:
 				print_status(module, "No new emails in %s mailbox." % mailbox)
-				break
+				time.sleep(interval)
+				continue
 			print_status(module, "Downloading %s messages from %s mailbox" % (len(uids), mailbox))
 			csv = ",".join(uids) ##TODO: switch this back to a single loop
 			result, msgs = mail.uid('fetch', csv, '(RFC822)')
